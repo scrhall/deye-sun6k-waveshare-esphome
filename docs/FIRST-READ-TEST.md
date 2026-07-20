@@ -31,7 +31,7 @@ Change one thing at a time:
 
 1. Confirm on `Paral. Set3` that `Modbus SN` is exactly `01`; otherwise set `modbus_address` to the displayed value.
 2. Confirm the RJ45 is labelled `Modbus`, not `BMS 485/CAN` or `RS485/METER`.
-3. Watch the Waveshare TX/RX indicators during a poll. TX without RX confirms no electrical reply.
+3. Watch the Waveshare's single bi-color RS485 LED during a poll. The official schematic maps **green=TX** and **blue=RX**. Periodic green without blue confirms transmission with no electrical reply.
 4. If `Modbus SN=01` and only TX occurs: isolate power, swap only A+ and B-, restore power, and retest. Change nothing else.
 5. If RX remains absent, restore original polarity, use the shortest cable, and keep 120 Ω termination disabled.
 6. Confirm no other Modbus master/client is connected.

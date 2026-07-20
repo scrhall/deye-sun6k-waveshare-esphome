@@ -31,7 +31,7 @@ Cambiar una sola cosa cada vez:
 
 1. Confirmar en `Paral. Set3` que `Modbus SN` muestra exactamente `01`; si no, cambiar `modbus_address` al valor real.
 2. Confirmar que el RJ45 es el puerto rotulado `Modbus`, no `BMS 485/CAN` ni `RS485/METER`.
-3. Revisar LED TX/RX de Waveshare durante una consulta. TX sin RX confirma ausencia eléctrica de respuesta.
+3. Revisar el único LED RS485 bicolor de Waveshare durante una consulta. Según el esquema oficial: **verde=TX**, **azul=RX**. Verde periódico sin azul confirma transmisión sin respuesta eléctrica.
 4. Si `Modbus SN=01` y solo hay TX: aislar alimentación, intercambiar únicamente A+ y B-, restaurar alimentación y repetir. No cambiar nada más en esta prueba.
 5. Si sigue sin RX, restaurar la polaridad original, usar cable mínimo y dejar desactivada la terminación de 120 Ω.
 6. Confirmar que no existe otro maestro/cliente Modbus conectado.

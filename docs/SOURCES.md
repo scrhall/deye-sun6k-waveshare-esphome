@@ -26,6 +26,8 @@ Images `docs/assets/deye-function-port-definitions.png`, `deye-bms-rj45-pinout.p
 - [Demo](https://files.waveshare.com/wiki/ESP32-S3-RS485-CAN/ESP32-S3-RS485-CAN-Demo.zip): `GPIO17` TX and `GPIO18` RX in `WS_GPIO.h`; automatic half-duplex handling in `WS_RS485.cpp`.
 - [Schematic](https://files.waveshare.com/wiki/ESP32-S3-RS485-CAN/ESP32-S3-RS485-CAN-Schematic.pdf).
 
+The schematic shows the single RS485 indicator (`LED2`) as bi-color: green channel on `TXD1`, blue channel on `RXD1`.
+
 ## ESPHome — official
 
 [Modbus](https://esphome.io/components/modbus/) · [Controller](https://esphome.io/components/modbus_controller/) · [Sensor](https://esphome.io/components/sensor/modbus_controller/) · [UART](https://esphome.io/components/uart/)
