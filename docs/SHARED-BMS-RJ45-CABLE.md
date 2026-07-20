@@ -5,6 +5,10 @@
 > [!CAUTION]
 > Prefer the dedicated inverter **`Modbus`** port. Deye documents `BMS 485/CAN` as a **battery communication** port, not as a telemetry Modbus port. Its RS485 pins may use a battery protocol and may not answer registers 183/184. This breakout is experimental and must not be used unless a read-only test confirms the expected Modbus response without affecting BMS communication.
 
+![Official Deye communication-port definitions](assets/deye-function-port-definitions.png)
+
+*Crop from the official Deye manual, printed page 14: `BMS 485/CAN` for battery communication and `Modbus` reserved.*
+
 ## Never use this when
 
 - The battery communicates with the inverter over RS485 instead of CAN.
@@ -15,6 +19,10 @@
 ## Inverter BMS port pinout
 
 Official Deye manual, Appendix I, printed page 52:
+
+![Official Deye BMS 485/CAN pinout](assets/deye-bms-rj45-pinout.png)
+
+*Unmodified crop from the official manual showing the complete table and connector orientation.*
 
 | Pin | Signal |
 |---:|---|
@@ -29,31 +37,46 @@ Official Deye manual, Appendix I, printed page 52:
 
 The manual shows the socket face-on, latch notch down, contacts at the top: pins 1→8 run left to right. Avoid relying on Ethernet wire colors; use numbered RJ45 breakout boards and verify every pin with a continuity tester.
 
-## Intended breakout
+## Proposed construction
 
-Only for a SE-F16 already verified to communicate over CAN on PCS pins 4/5:
+The original BMS cable remains untouched. Insert a custom male-to-male extension and a straight-through female-to-female RJ45 coupler:
 
 ```text
-Inverter BMS RJ45                   Battery SE-F16 PCS
-pin 4  CAN-H  --------------------  pin 4  CAN-H
-pin 5  CAN-L  --------------------  pin 5  CAN-L
-
-Inverter BMS RJ45                   Waveshare isolated RS485
-pin 1  485_B  --------------------  B-
-pin 2  485_A  --------------------  A+
+Inverter BMS female RJ45
+          │
+          └── male A ── custom extension ── male B
+                 │                           │
+                 │                           └── straight-through RJ45 female-female coupler
+                 │                                      │
+                 │                                      └── original BMS cable ── battery PCS
+                 │
+                 ├── pin 1, 485_B ──→ Waveshare B-
+                 └── pin 2, 485_A ──→ Waveshare A+
 ```
+
+For a SE-F16 already verified to communicate over CAN on PCS pins 4/5, the extension preserves:
+
+| Male A, inverter side | Male B, coupler side | Destination through original cable |
+|---|---|---|
+| Pin 4, `CAN-H` | Pin 4 | PCS pin 4, `CAN-H` |
+| Pin 5, `CAN-L` | Pin 5 | PCS pin 5, `CAN-L` |
+
+The RS485 branch leaves only from **male A**: pin 1→B- and pin 2→A+. Those pins **do not continue to male B**, the coupler, or the original BMS cable.
 
 - Do not connect inverter pins 3/6 to Waveshare: its isolated RS485 terminal exposes only A+/B-.
 - Leave duplicate RS485 pins 7/8 unused. Do not use both RS485 pairs.
-- Preserve any CAN reference/ground conductor required by the exact battery revision and original cable. Confirm against that battery's manual and a continuity test; do not guess.
+- The female-to-female coupler must be straight-through, not crossover; verify 1→1, 2→2 … 8→8 with continuity mode.
+- Preserve in the extension any CAN reference/ground conductor required by the exact battery revision and original cable. Confirm against that battery's manual and a continuity test; do not guess.
+- This extension is not a complete Ethernet patch lead: do not carry pins 1/2/7/8 to the battery side. Carry only CAN 4/5 and any additional reference conductor already verified.
 - Keep the battery CAN branch straight-through and short. Keep the RS485 branch short for the first test.
 
 ## Parts
 
-- One labelled RJ45 male breakout or short patch lead to the inverter.
-- One labelled RJ45 female breakout for the battery cable.
+- Custom extension with two RJ45 male plugs: **male A** to inverter, **male B** to coupler.
+- Straight-through 8P8C female-to-female RJ45 coupler.
+- Original BMS cable, uncut and unmodified.
 - A+/B- twisted pair to Waveshare.
-- Multimeter with continuity mode, insulated enclosure, strain relief, and labels.
+- Insulated junction box beside male A, multimeter, strain relief, and labels.
 
 Do not use a crimped Y cable until the breakout version has passed every test.
 
@@ -61,10 +84,10 @@ Do not use a crimped Y cable until the breakout version has passed every test.
 
 1. Shut down and isolate inverter, battery, and ESP supply according to their manuals.
 2. Photograph and label every connector. Confirm the battery is configured for CAN.
-3. Map the original working battery cable pin by pin with continuity mode.
-4. Build the CAN path first. Check pin 4→4 and 5→5; confirm no short between them or to any other pin.
-5. Add only inverter pin 1→Waveshare B- and pin 2→Waveshare A+.
-6. Check all eight inverter pins against every output. Resistance between unrelated pins must be open; never use continuity mode on energized equipment.
+3. Map the original BMS cable and female-to-female coupler pin by pin with continuity mode.
+4. Build the male A→male B extension. Carry 4→4 and 5→5; add only a separately confirmed CAN reference conductor.
+5. In the male-A junction box, branch pin 1→Waveshare B- and pin 2→A+. Do not carry 1/2/7/8 to male B.
+6. Check end-to-end: inverter 4→PCS 4, inverter 5→PCS 5, inverter 1→B- only, and inverter 2→A+ only. Every other destination must be open except verified reference conductors. Never use continuity mode on energized equipment.
 7. Reconnect the battery branch **without ESP connected**. Start the system and confirm normal battery SOC, voltage, and no BMS alarm.
 8. Power the ESP separately, then connect A+/B-. Run the [two-register read test](FIRST-READ-TEST.md).
 9. If Modbus does not answer, disconnect the ESP branch. Do not assume another baud rate or write registers.
