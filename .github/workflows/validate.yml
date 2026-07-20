@@ -7,6 +7,11 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        yaml-file:
+          - deye-sun6k-waveshare.yaml
+          - deye-sun6k-waveshare-test.yaml
     steps:
       - uses: actions/checkout@v5
       - name: Create CI-only secrets
@@ -15,6 +20,6 @@ jobs:
           sed -i 's|YOUR_WIFI_PASSWORD|ci-password|; s|YOUR_WIFI|ci-network|; s|REPLACE_WITH_A_32_BYTE_BASE64_KEY|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=|; s|REPLACE_WITH_OTA_PASSWORD|ci-ota-password|; s|REPLACE_WITH_AT_LEAST_8_CHARACTERS|ci-fallback-password|' secrets.yaml
       - uses: esphome/build-action@v7
         with:
-          yaml-file: deye-sun6k-waveshare.yaml
+          yaml-file: ${{ matrix.yaml-file }}
           version: latest
           complete-manifest: true

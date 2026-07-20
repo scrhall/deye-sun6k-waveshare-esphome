@@ -11,6 +11,7 @@ Official sources support hardware, ports, pinout, and ESPHome syntax. Register a
 | Separate BMS, meter, and Modbus ports | 3 |
 | Port purposes; Modbus marked “Reserved” | 14 |
 | `Modbus SN` is the inverter address | 44 |
+| BMS 485/CAN RJ45 pinout | 52 |
 | Modbus RJ45 pinout | 53 |
 
 Pinout: `1=B`, `2=A`, `3=GND`, `6=GND`, `7=A`, `8=B`; pins 4–5 unused.

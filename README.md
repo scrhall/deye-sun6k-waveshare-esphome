@@ -30,7 +30,7 @@ Power Waveshare through USB-C 5 V or DC 7–36 V. For a DIN-rail installation, t
 
 Board UART: TX `GPIO17`, RX `GPIO18`; automatic direction control, no `flow_control_pin`. Keep the 120 Ω jumper disabled for the initial short-cable test.
 
-> **Safety:** isolate the inverter before opening it. The DIN supply has a 100–240 V AC input: mains wiring must be enclosed and performed by a qualified person. Do not use `BMS 485/CAN`, `RS485/METER`, or parallel ports. The Deye manual marks the Modbus port “Reserved”; firmware compatibility is not guaranteed.
+> **Safety:** isolate the inverter before opening it. The DIN supply has a 100–240 V AC input: mains wiring must be enclosed and performed by a qualified person. Do not use `RS485/METER` or parallel ports. Share `BMS 485/CAN` only under the [experimental breakout procedure](docs/SHARED-BMS-RJ45-CABLE.md). The Deye manual marks the dedicated Modbus port “Reserved”; firmware compatibility is not guaranteed.
 
 ## Install
 
@@ -51,12 +51,7 @@ Defaults: `9600 8N1`, slave `0x01`, function `03`, polling every 10 seconds. If 
 
 Viewing does not require saving: avoid changing fields and do not press the green confirmation button. The official manual shows no password prompt for viewing; firmware may differ.
 
-Test first:
-
-- `Battery SOC`: register `184`
-- `Battery Voltage`: register `183`, ×0.01 V
-
-No response: verify port, `Modbus SN`, A/B polarity, logs, RS485 LED, short cable, and absence of another Modbus client.
+First test: import [`deye-sun6k-waveshare-test.yaml`](deye-sun6k-waveshare-test.yaml), which reads only SOC register `184` and voltage register `183` (×0.01 V). Follow the [step-by-step test](docs/FIRST-READ-TEST.md).
 
 Signed grid/battery power values must be checked against known import/export and charge/discharge states.
 

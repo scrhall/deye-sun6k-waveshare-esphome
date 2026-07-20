@@ -30,7 +30,7 @@ Alimentar Waveshare por USB-C 5 V o DC 7–36 V. Para montaje DIN, la fuente enl
 
 UART: TX `GPIO17`, RX `GPIO18`; dirección automática, sin `flow_control_pin`. Mantener desactivado el jumper de 120 Ω en la prueba inicial con cable corto.
 
-> **Seguridad:** aislar el inversor antes de abrirlo. La fuente DIN recibe 100–240 V AC: el cableado de red debe quedar protegido y realizarlo personal cualificado. No usar `BMS 485/CAN`, `RS485/METER` ni puertos paralelos. El manual Deye marca Modbus como “Reserved”; la compatibilidad depende del firmware.
+> **Seguridad:** aislar el inversor antes de abrirlo. La fuente DIN recibe 100–240 V AC: el cableado de red debe quedar protegido y realizarlo personal cualificado. No usar `RS485/METER` ni puertos paralelos. Compartir `BMS 485/CAN` solo siguiendo el [procedimiento experimental](SHARED-BMS-RJ45-CABLE.es.md). El manual Deye marca el puerto Modbus dedicado como “Reserved”; la compatibilidad depende del firmware.
 
 ## Instalación
 
@@ -51,12 +51,7 @@ Valores predeterminados: `9600 8N1`, esclavo `0x01`, función `03`, consulta cad
 
 Para consultar no hay que guardar: no cambiar campos ni pulsar la confirmación verde. El manual oficial no muestra contraseña para visualizar esta pantalla; el firmware puede variar.
 
-Probar primero:
-
-- `Battery SOC`: registro `184`
-- `Battery Voltage`: registro `183`, ×0,01 V
-
-Sin respuesta: revisar puerto, `Modbus SN`, polaridad A/B, logs, LED RS485, cable corto y ausencia de otro cliente Modbus.
+Primera prueba: importar [`deye-sun6k-waveshare-test.yaml`](../deye-sun6k-waveshare-test.yaml), que solo lee SOC `184` y voltaje `183` (×0,01 V). Seguir la [prueba paso a paso](FIRST-READ-TEST.es.md).
 
 Verificar experimentalmente los signos de potencia de red y batería.
 
