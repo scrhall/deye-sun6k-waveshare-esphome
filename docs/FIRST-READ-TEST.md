@@ -38,3 +38,14 @@ Change one thing at a time:
 7. If the correct address and both polarities produce TX without RX on the dedicated port, the leading hypothesis is that this firmware does not enable the manual's reserved `Modbus` port. Do not attempt writes.
 
 Stop immediately if the inverter reports a BMS/CAN alarm. Restore the original battery cable and disconnect the ESP branch.
+
+## Dedicated-port SunSpec test
+
+The official pinout labels this port `SunSpec`. Firmware may ignore proprietary registers 183/184 while answering only the standard map.
+
+1. Install [`deye-sun6k-sunspec-test.yaml`](../deye-sun6k-sunspec-test.yaml), keeping address `0x01` and the verified wiring.
+2. The first request must be `01 03 9C 40 00 02 EB 8F`: function 03, two registers from 40000.
+3. A valid signature returns `0x5375 0x6E53`, displayed as `21365` and `28243`: ASCII `SunS`.
+4. Any reply, including a Modbus exception or different values, proves the port, address, baud rate, and polarity work.
+5. If 40000 does not reply, edit only `sunspec_base_address`: test `0`, then `50000`, the alternative bases scanned by the official SunSpec client.
+6. If no base produces RX, stop changing registers: the fault remains transport, firmware, or a disabled port.

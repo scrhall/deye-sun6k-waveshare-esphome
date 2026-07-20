@@ -32,6 +32,8 @@ The schematic shows the single RS485 indicator (`LED2`) as bi-color: green chann
 
 [Modbus](https://esphome.io/components/modbus/) · [Controller](https://esphome.io/components/modbus_controller/) · [Sensor](https://esphome.io/components/sensor/modbus_controller/) · [UART](https://esphome.io/components/uart/)
 
+SunSpec discovery reference: official [`sunspec/pysunspec2`](https://github.com/sunspec/pysunspec2), where `SUNS_BASE_ADDR_DEFAULT = 40000`, the client scans `[40000, 0, 50000]`, and checks for byte signature `SunS`.
+
 ## Registers — community
 
 Source: [Lewa-Reka/esphome-deye-inverter](https://github.com/Lewa-Reka/esphome-deye-inverter), `SG0XLP1`.

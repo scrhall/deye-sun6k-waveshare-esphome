@@ -56,7 +56,7 @@ Valores ESPHome: `9600 8N1`, esclavo `0x01`, función `03`, consulta cada 10 seg
 
 Para consultar no hay que guardar: no cambiar campos ni pulsar la confirmación verde. El manual oficial no muestra contraseña para visualizar esta pantalla; el firmware puede variar.
 
-Primera prueba: importar [`deye-sun6k-waveshare-test.yaml`](../deye-sun6k-waveshare-test.yaml), que solo lee SOC `184` y voltaje `183` (×0,01 V). Seguir la [prueba paso a paso](FIRST-READ-TEST.es.md).
+Primera prueba: importar [`deye-sun6k-waveshare-test.yaml`](../deye-sun6k-waveshare-test.yaml), que solo lee SOC `184` y voltaje `183` (×0,01 V). Seguir la [prueba paso a paso](FIRST-READ-TEST.es.md). Si el puerto dedicado ignora el mapa propietario de registros bajos, probar la [firma `SunSpec`](../deye-sun6k-sunspec-test.yaml), también de solo lectura.
 
 Verificar experimentalmente los signos de potencia de red y batería.
 

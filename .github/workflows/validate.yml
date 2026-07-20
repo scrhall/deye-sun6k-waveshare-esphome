@@ -12,6 +12,7 @@ jobs:
         yaml-file:
           - deye-sun6k-waveshare.yaml
           - deye-sun6k-waveshare-test.yaml
+          - deye-sun6k-sunspec-test.yaml
     steps:
       - uses: actions/checkout@v5
       - name: Create CI-only secrets

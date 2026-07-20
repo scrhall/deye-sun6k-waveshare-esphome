@@ -56,7 +56,7 @@ ESPHome defaults: `9600 8N1`, slave `0x01`, function `03`, polling every 10 seco
 
 Viewing does not require saving: avoid changing fields and do not press the green confirmation button. The official manual shows no password prompt for viewing; firmware may differ.
 
-First test: import [`deye-sun6k-waveshare-test.yaml`](deye-sun6k-waveshare-test.yaml), which reads only SOC register `184` and voltage register `183` (×0.01 V). Follow the [step-by-step test](docs/FIRST-READ-TEST.md).
+First test: import [`deye-sun6k-waveshare-test.yaml`](deye-sun6k-waveshare-test.yaml), which reads only SOC register `184` and voltage register `183` (×0.01 V). Follow the [step-by-step test](docs/FIRST-READ-TEST.md). If the dedicated port ignores the proprietary low register map, try the read-only [`SunSpec` signature test](deye-sun6k-sunspec-test.yaml).
 
 Signed grid/battery power values must be checked against known import/export and charge/discharge states.
 

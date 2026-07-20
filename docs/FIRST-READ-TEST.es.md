@@ -38,3 +38,14 @@ Cambiar una sola cosa cada vez:
 7. Si dirección y ambas polaridades producen TX sin RX en el puerto dedicado, la hipótesis principal pasa a ser que el puerto `Modbus` marcado como reservado no está habilitado por ese firmware. No probar escrituras.
 
 Parar inmediatamente ante alarma BMS/CAN. Restaurar el cable original y desconectar el ramal ESP.
+
+## Prueba SunSpec del puerto dedicado
+
+El puerto está rotulado `SunSpec` en el pinout oficial. Un firmware puede ignorar los registros propietarios 183/184 y responder solo al mapa estándar.
+
+1. Instalar [`deye-sun6k-sunspec-test.yaml`](../deye-sun6k-sunspec-test.yaml), manteniendo dirección `0x01` y cableado comprobado.
+2. La primera petición debe ser `01 03 9C 40 00 02 EB 8F`: función 03, dos registros desde 40000.
+3. Una firma válida devuelve `0x5375 0x6E53`, mostrada como `21365` y `28243`: ASCII `SunS`.
+4. Cualquier respuesta, incluso excepción Modbus o valores distintos, demuestra que puerto, dirección, baud y polaridad funcionan.
+5. Si 40000 no responde, editar solo `sunspec_base_address`: probar `0` y después `50000`, bases alternativas buscadas por el cliente oficial SunSpec.
+6. Si ninguna base produce RX, dejar de cambiar registros: el problema sigue en transporte, firmware o puerto deshabilitado.
