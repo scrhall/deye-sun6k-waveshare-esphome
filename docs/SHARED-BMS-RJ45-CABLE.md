@@ -77,6 +77,10 @@ The female-to-female coupler itself must be fully straight-through:
 
 Although the coupler preserves all eight contacts, male B carries a useful signal only on 4/5; 1/2/3/6/7/8 arrive open from the custom extension.
 
+### Can every pin except 1/2 pass through?
+
+**Not as a safe default.** The manual labels 7/8 as another `485_A`/`485_B` pair; passing them carries the same RS485 bus toward the battery even when 1/2 are cut. Pins 3/6 are `GND_485`, not a documented CAN ground. For a battery confirmed on CAN, carry only 4/5. Add another conductor only when the exact battery-revision manual or a verified original-cable test proves it is required. If all eight pins must remain connected, do not share this port with a passive cable; use the dedicated `Modbus` port.
+
 - Do not connect inverter pins 3/6 to Waveshare: its isolated RS485 terminal exposes only A+/B-.
 - Leave duplicate RS485 pins 7/8 unused. Do not use both RS485 pairs.
 - The female-to-female coupler must be straight-through, not crossover; verify 1→1, 2→2 … 8→8 with continuity mode.

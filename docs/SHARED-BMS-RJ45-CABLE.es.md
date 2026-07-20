@@ -77,6 +77,10 @@ El acoplador hembra–hembra sí debe ser totalmente recto:
 
 Aunque el acoplador conserve los ocho pines, el macho B solo recibe señal útil en 4/5; 1/2/3/6/7/8 llegan abiertos desde la extensión.
 
+### ¿Se pueden pasar todos menos 1/2?
+
+**No como opción segura.** El manual etiqueta 7/8 como otro par `485_A`/`485_B`; pasarlos vuelve a llevar el mismo bus RS485 hacia la batería aunque 1/2 estén cortados. Además, 3/6 son `GND_485`, no una masa CAN documentada. Para una batería confirmada en CAN, pasar únicamente 4/5. Añadir otro conductor solo si el manual de la revisión exacta o una comprobación del cable original demuestra que es necesario. Si hay que conservar los ocho pines, no compartir este puerto mediante un cable pasivo: usar el puerto `Modbus` dedicado.
+
 - No conectar pines 3/6 del inversor a Waveshare: su borne RS485 aislado solo expone A+/B-.
 - Dejar sin usar los pines RS485 duplicados 7/8. No usar ambos pares.
 - El acoplador hembra–hembra debe ser recto, no cruzado; verificar 1→1, 2→2… 8→8 con continuidad.
