@@ -54,14 +54,28 @@ Inverter BMS female RJ45
                  └── pin 2, 485_A ──→ Waveshare A+
 ```
 
-For a SE-F16 already verified to communicate over CAN on PCS pins 4/5, the extension preserves:
+For a SE-F16 already verified to communicate over CAN on PCS pins 4/5, this is the complete mapping. Colors are references only when both pigtails really use T568B; always trust pin numbers verified by continuity.
 
-| Male A, inverter side | Male B, coupler side | Destination through original cable |
-|---|---|---|
-| Pin 4, `CAN-H` | Pin 4 | PCS pin 4, `CAN-H` |
-| Pin 5, `CAN-L` | Pin 5 | PCS pin 5, `CAN-L` |
+| Pin | T568B color | Male A, inverter | Connection to male B | Side branch |
+|---:|---|---|---|---|
+| 1 | white/orange | `485_B` | **Do not connect** | Waveshare `B-` |
+| 2 | orange | `485_A` | **Do not connect** | Waveshare `A+` |
+| 3 | white/green | `GND_485` | **Do not connect** | None |
+| 4 | blue | `CAN-H` | **Pin 4→pin 4, straight** | None |
+| 5 | white/blue | `CAN-L` | **Pin 5→pin 5, straight** | None |
+| 6 | green | `GND_485` | **Do not connect** | None |
+| 7 | white/brown | `485_A` | **Do not connect** | None |
+| 8 | brown | `485_B` | **Do not connect** | None |
 
-The RS485 branch leaves only from **male A**: pin 1→B- and pin 2→A+. Those pins **do not continue to male B**, the coupler, or the original BMS cable.
+Therefore, **nothing is crossed**. The RS485 branch leaves only from male A. Pins 1/2 do not continue to male B, the coupler, or the original BMS cable.
+
+The female-to-female coupler itself must be fully straight-through:
+
+```text
+1→1  2→2  3→3  4→4  5→5  6→6  7→7  8→8
+```
+
+Although the coupler preserves all eight contacts, male B carries a useful signal only on 4/5; 1/2/3/6/7/8 arrive open from the custom extension.
 
 - Do not connect inverter pins 3/6 to Waveshare: its isolated RS485 terminal exposes only A+/B-.
 - Leave duplicate RS485 pins 7/8 unused. Do not use both RS485 pairs.
@@ -79,6 +93,15 @@ The RS485 branch leaves only from **male A**: pin 1→B- and pin 2→A+. Those p
 - Insulated junction box beside male A, multimeter, strain relief, and labels.
 
 Do not use a crimped Y cable until the breakout version has passed every test.
+
+### Simple method using one T568B patch lead
+
+1. Use one straight-through male-to-male T568B patch lead and cut it in the middle: one half becomes male A and the other male B.
+2. Bring both cut ends into a terminal enclosure.
+3. Join A blue↔B blue (pin 4) and A white/blue↔B white/blue (pin 5).
+4. Route male-A white/orange (pin 1) to `B-` and male-A orange (pin 2) to `A+`.
+5. Individually insulate every other conductor on both sides. Do not join them.
+6. Verify by pin number; if colors do not exactly match T568B, ignore them and map with continuity mode.
 
 ## Build and verify
 

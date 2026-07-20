@@ -54,14 +54,28 @@ Inversor, BMS RJ45 hembra
                  └── pin 2, 485_A ──→ Waveshare A+
 ```
 
-Para una SE-F16 ya comprobada comunicando por CAN mediante PCS 4/5, la extensión conserva:
+Para una SE-F16 ya comprobada comunicando por CAN mediante PCS 4/5, este es el mapeo completo. Los colores solo son referencia si ambos latiguillos son realmente T568B; manda siempre el número comprobado con multímetro.
 
-| Macho A, lado inversor | Macho B, lado acoplador | Destino mediante cable original |
-|---|---|---|
-| Pin 4, `CAN-H` | Pin 4 | PCS pin 4, `CAN-H` |
-| Pin 5, `CAN-L` | Pin 5 | PCS pin 5, `CAN-L` |
+| Pin | Color T568B | Macho A, inversor | Unión hacia macho B | Derivación lateral |
+|---:|---|---|---|---|
+| 1 | blanco/naranja | `485_B` | **No conectar** | Waveshare `B-` |
+| 2 | naranja | `485_A` | **No conectar** | Waveshare `A+` |
+| 3 | blanco/verde | `GND_485` | **No conectar** | Ninguna |
+| 4 | azul | `CAN-H` | **Pin 4→pin 4, recto** | Ninguna |
+| 5 | blanco/azul | `CAN-L` | **Pin 5→pin 5, recto** | Ninguna |
+| 6 | verde | `GND_485` | **No conectar** | Ninguna |
+| 7 | blanco/marrón | `485_A` | **No conectar** | Ninguna |
+| 8 | marrón | `485_B` | **No conectar** | Ninguna |
 
-La derivación RS485 sale únicamente del **macho A**: pin 1→B- y pin 2→A+. Esos pines **no continúan al macho B**, al acoplador ni al cable BMS original.
+Por tanto, **no hay cruces**. La derivación RS485 sale únicamente del macho A. Pines 1/2 no continúan al macho B, acoplador ni cable BMS original.
+
+El acoplador hembra–hembra sí debe ser totalmente recto:
+
+```text
+1→1  2→2  3→3  4→4  5→5  6→6  7→7  8→8
+```
+
+Aunque el acoplador conserve los ocho pines, el macho B solo recibe señal útil en 4/5; 1/2/3/6/7/8 llegan abiertos desde la extensión.
 
 - No conectar pines 3/6 del inversor a Waveshare: su borne RS485 aislado solo expone A+/B-.
 - Dejar sin usar los pines RS485 duplicados 7/8. No usar ambos pares.
@@ -79,6 +93,15 @@ La derivación RS485 sale únicamente del **macho A**: pin 1→B- y pin 2→A+. 
 - Caja de derivación aislante junto al macho A, multímetro, alivio de tensión y etiquetas.
 
 No crimpar un cable en Y definitivo hasta validar la versión con breakouts.
+
+### Forma sencilla con un latiguillo T568B
+
+1. Usar un cable macho–macho recto T568B y cortarlo por el centro: una mitad será macho A y otra macho B.
+2. Introducir ambos extremos cortados en una caja con bornes.
+3. Unir azul A↔azul B (pin 4) y blanco/azul A↔blanco/azul B (pin 5).
+4. Llevar blanco/naranja del macho A (pin 1) a `B-` y naranja del macho A (pin 2) a `A+`.
+5. Aislar individualmente todos los demás hilos de ambos lados. No unirlos entre sí.
+6. Verificar por número de pin; si los colores no coinciden exactamente con T568B, ignorarlos y mapear con continuidad.
 
 ## Montaje y comprobación
 
