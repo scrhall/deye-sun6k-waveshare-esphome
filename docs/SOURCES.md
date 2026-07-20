@@ -15,6 +15,8 @@ Official sources support hardware, ports, pinout, and ESPHome syntax. Register a
 
 Pinout: `1=B`, `2=A`, `3=GND`, `6=GND`, `7=A`, `8=B`; pins 4–5 unused.
 
+LCD route verified against printed pages 30, 34, and 44: main screen gear icon → `Advanced Function` → right-side ↑/↓ arrows → `Paral. Set3`. `Modbus SN` is shown at the top of that screen.
+
 ## Waveshare — official
 
 - [Wiki](https://www.waveshare.com/wiki/ESP32-S3-RS485-CAN): isolated RS485, power, terminals, termination.

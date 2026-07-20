@@ -46,6 +46,15 @@ esphome run deye-sun6k-waveshare.yaml
 
 Valores predeterminados: `9600 8N1`, esclavo `0x01`, función `03`, consulta cada 10 segundos. Cambiar `modbus_address` si no coincide con `Modbus SN`.
 
+### Comprobar `Modbus SN` en el inversor
+
+1. En la pantalla principal, pulsar el **engranaje** superior derecho.
+2. Pulsar **`Advanced Function`**.
+3. Usar las flechas laterales **↑/↓** hasta ver **`Paral. Set3`**.
+4. Leer **`Modbus SN`** en la parte superior. Debe mostrar `01` para el valor predeterminado `0x01`; si muestra otro número, cambiar `modbus_address` al valor mostrado.
+
+Para consultar no hay que guardar: no cambiar campos ni pulsar la confirmación verde. El manual oficial no muestra contraseña para visualizar esta pantalla; el firmware puede variar.
+
 Probar primero:
 
 - `Battery SOC`: registro `184`

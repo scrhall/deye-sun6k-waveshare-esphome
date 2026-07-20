@@ -46,6 +46,15 @@ esphome run deye-sun6k-waveshare.yaml
 
 Defaults: `9600 8N1`, slave `0x01`, function `03`, polling every 10 seconds. If needed, change `modbus_address` to match the inverter's `Modbus SN`.
 
+### Check `Modbus SN` on the inverter
+
+1. On the main touchscreen, tap the **gear icon** at the top right.
+2. Tap **`Advanced Function`**.
+3. Use the right-side **↑/↓ arrows** until the page label is **`Paral. Set3`**.
+4. Read **`Modbus SN`** at the top of that screen. It must be `01` for this YAML's default `0x01`; otherwise change `modbus_address` to the displayed value.
+
+Viewing does not require saving: avoid changing fields and do not press the green confirmation button. The official manual shows no password prompt for viewing; firmware may differ.
+
 Test first:
 
 - `Battery SOC`: register `184`
