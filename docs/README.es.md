@@ -7,6 +7,7 @@ Lector ESPHome Modbus RTU para:
 - Deye `SUN-6K-SG05LP1-EU-AM2-P`
 - Waveshare `ESP32-S3-RS485-CAN`
 - [Comprar la placa en Amazon](https://amzn.to/4fxuGVk)
+- [Fuente opcional DIN 12 V DC, 1,25 A y 15 W](https://amzn.to/4vEIxz0)
 
 El YAML actual es **solo lectura**: 31 sensores, sin entidades ni comandos de escritura. Compilado con ESPHome 2026.6.5. El mapa de registros es comunitario y requiere prueba física.
 
@@ -22,11 +23,11 @@ Usar solo el RJ45 del inversor marcado **`Modbus`**.
 
 Par alternativo: pin 8 → B-, pin 7 → A+. No usar ambos pares.
 
-Alimentar Waveshare por USB-C 5 V o DC 7–36 V. No alimentarla desde el RJ45.
+Alimentar Waveshare por USB-C 5 V o DC 7–36 V. Para montaje DIN, la fuente enlazada puede alimentar la entrada DC de la placa respetando polaridad `+`/`-`. No alimentarla desde el RJ45.
 
 UART: TX `GPIO17`, RX `GPIO18`; dirección automática, sin `flow_control_pin`. Mantener desactivado el jumper de 120 Ω en la prueba inicial con cable corto.
 
-> **Seguridad:** aislar el inversor antes de abrirlo. No usar `BMS 485/CAN`, `RS485/METER` ni puertos paralelos. El manual Deye marca Modbus como “Reserved”; la compatibilidad depende del firmware.
+> **Seguridad:** aislar el inversor antes de abrirlo. La fuente DIN recibe 100–240 V AC: el cableado de red debe quedar protegido y realizarlo personal cualificado. No usar `BMS 485/CAN`, `RS485/METER` ni puertos paralelos. El manual Deye marca Modbus como “Reserved”; la compatibilidad depende del firmware.
 
 ## Instalación
 

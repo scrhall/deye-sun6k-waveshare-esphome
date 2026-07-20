@@ -7,6 +7,7 @@ ESPHome Modbus RTU reader for:
 - Deye `SUN-6K-SG05LP1-EU-AM2-P`
 - Waveshare `ESP32-S3-RS485-CAN`
 - [Buy the board on Amazon](https://amzn.to/4fxuGVk)
+- [Optional 12 V DC, 1.25 A, 15 W DIN-rail power supply](https://amzn.to/4vEIxz0)
 
 Current YAML is **read-only**: 31 holding-register sensors, no write entities or commands. Compiled with ESPHome 2026.6.5. The register map is community-sourced and requires testing on the target inverter.
 
@@ -22,11 +23,11 @@ Use only the inverter RJ45 port marked **`Modbus`**.
 
 Alternative pair: pin 8 → B-, pin 7 → A+. Do not use both pairs.
 
-Power Waveshare through USB-C 5 V or DC 7–36 V. Do not power it from the inverter RJ45.
+Power Waveshare through USB-C 5 V or DC 7–36 V. For a DIN-rail installation, the linked 12 V supply can feed the board's DC input; observe `+`/`-` polarity. Do not power it from the inverter RJ45.
 
 Board UART: TX `GPIO17`, RX `GPIO18`; automatic direction control, no `flow_control_pin`. Keep the 120 Ω jumper disabled for the initial short-cable test.
 
-> **Safety:** isolate the inverter before opening it. Do not use `BMS 485/CAN`, `RS485/METER`, or parallel ports. The Deye manual marks the Modbus port “Reserved”; firmware compatibility is not guaranteed.
+> **Safety:** isolate the inverter before opening it. The DIN supply has a 100–240 V AC input: mains wiring must be enclosed and performed by a qualified person. Do not use `BMS 485/CAN`, `RS485/METER`, or parallel ports. The Deye manual marks the Modbus port “Reserved”; firmware compatibility is not guaranteed.
 
 ## Install
 
