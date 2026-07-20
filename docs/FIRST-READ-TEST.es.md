@@ -43,7 +43,7 @@ Parar inmediatamente ante alarma BMS/CAN. Restaurar el cable original y desconec
 
 El puerto está rotulado `SunSpec` en el pinout oficial. Un firmware puede ignorar los registros propietarios 183/184 y responder solo al mapa estándar.
 
-1. Instalar [`deye-sun6k-sunspec-test.yaml`](../deye-sun6k-sunspec-test.yaml), manteniendo dirección `0x01` y cableado comprobado.
+1. Instalar [`deye-sun6k-sunspec-test.yaml`](../deye-sun6k-sunspec-test.yaml), manteniendo dirección `0x01` y cableado comprobado. El YAML conserva `device_name: deye-sun6k-rs485`; no cambiar el hostname entre pruebas, porque Dashboard/API pueden perder el nodo tras reiniciar.
 2. La primera petición debe ser `01 03 9C 40 00 02 EB 8F`: función 03, dos registros desde 40000.
 3. Una firma válida devuelve `0x5375 0x6E53`, mostrada como `21365` y `28243`: ASCII `SunS`.
 4. Cualquier respuesta, incluso excepción Modbus o valores distintos, demuestra que puerto, dirección, baud y polaridad funcionan.

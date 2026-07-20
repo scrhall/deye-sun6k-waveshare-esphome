@@ -1,5 +1,6 @@
 substitutions:
-  device_name: deye-sun6k-sunspec-test
+  # Keep the production hostname so OTA/API discovery survives diagnostic firmware changes.
+  device_name: deye-sun6k-rs485
   friendly_name: "Deye SUN-6K SunSpec Test"
   modbus_address: "0x01"
   # SunSpec official clients scan 40000, then 0, then 50000.

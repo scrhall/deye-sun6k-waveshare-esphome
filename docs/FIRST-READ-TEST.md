@@ -43,7 +43,7 @@ Stop immediately if the inverter reports a BMS/CAN alarm. Restore the original b
 
 The official pinout labels this port `SunSpec`. Firmware may ignore proprietary registers 183/184 while answering only the standard map.
 
-1. Install [`deye-sun6k-sunspec-test.yaml`](../deye-sun6k-sunspec-test.yaml), keeping address `0x01` and the verified wiring.
+1. Install [`deye-sun6k-sunspec-test.yaml`](../deye-sun6k-sunspec-test.yaml), keeping address `0x01` and the verified wiring. The YAML preserves `device_name: deye-sun6k-rs485`; do not change the hostname between tests because Dashboard/API discovery may lose the node after reboot.
 2. The first request must be `01 03 9C 40 00 02 EB 8F`: function 03, two registers from 40000.
 3. A valid signature returns `0x5375 0x6E53`, displayed as `21365` and `28243`: ASCII `SunS`.
 4. Any reply, including a Modbus exception or different values, proves the port, address, baud rate, and polarity work.

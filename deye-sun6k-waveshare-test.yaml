@@ -1,5 +1,6 @@
 substitutions:
-  device_name: deye-sun6k-rs485-test
+  # Keep the production hostname so OTA/API discovery survives diagnostic firmware changes.
+  device_name: deye-sun6k-rs485
   friendly_name: "Deye SUN-6K RS485 Test"
   modbus_address: "0x01"
 
