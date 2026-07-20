@@ -2,6 +2,9 @@
 
 [Español](docs/README.es.md) · [Sources](docs/SOURCES.md)
 
+> [!WARNING]
+> **AI-generated and pending review.** The documentation and configuration have not completed human or field validation. Anyone using, modifying, wiring, flashing, or operating this project does so entirely at their own risk. No liability is accepted for damage, data loss, injury, or incorrect operation.
+
 ESPHome Modbus RTU reader for:
 
 - Deye `SUN-6K-SG05LP1-EU-AM2-P`
@@ -31,18 +34,11 @@ Board UART: TX `GPIO17`, RX `GPIO18`; automatic direction control, no `flow_cont
 
 ## Install
 
-```bash
-git clone https://github.com/scrhall/deye-sun6k-waveshare-esphome.git
-cd deye-sun6k-waveshare-esphome
-cp secrets.example.yaml secrets.yaml
-```
-
-Edit `secrets.yaml`, then:
-
-```bash
-esphome config deye-sun6k-waveshare.yaml
-esphome run deye-sun6k-waveshare.yaml
-```
+1. In Home Assistant, install/start **ESPHome Device Builder** and open its web UI.
+2. Select **New Device Setup**, enter Wi-Fi details, and finish the wizard. Before replacing its YAML, copy the generated API encryption key and OTA password.
+3. Open **EDIT**. Replace the generated YAML with the contents of [`deye-sun6k-waveshare.yaml`](https://raw.githubusercontent.com/scrhall/deye-sun6k-waveshare-esphome/main/deye-sun6k-waveshare.yaml), then save.
+4. Open the Dashboard **SECRETS** editor. Add the five keys listed in [`secrets.example.yaml`](https://github.com/scrhall/deye-sun6k-waveshare-esphome/blob/main/secrets.example.yaml), using the Wi-Fi details and generated credentials from the wizard.
+5. From the device menu, select **Validate**, then **Install**. Connect the board by USB-C for the first flash; later updates can use Wi-Fi.
 
 Defaults: `9600 8N1`, slave `0x01`, function `03`, polling every 10 seconds. If needed, change `modbus_address` to match the inverter's `Modbus SN`.
 
@@ -69,6 +65,7 @@ Signed grid/battery power values must be checked against known import/export and
 - [Official Deye manual](https://www.deyeinverter.com/deyeinverter/2025/08/12/rand/5761/%5Bb%5Dmanual_sun-3.6-10k-sg05lp1-eu-am2-p_20250812_en.pdf): ports, `Modbus SN`, pinout on printed pages 3, 14, 44, 53.
 - Official Waveshare: [wiki](https://www.waveshare.com/wiki/ESP32-S3-RS485-CAN), [demo](https://files.waveshare.com/wiki/ESP32-S3-RS485-CAN/ESP32-S3-RS485-CAN-Demo.zip), [schematic](https://files.waveshare.com/wiki/ESP32-S3-RS485-CAN/ESP32-S3-RS485-CAN-Schematic.pdf).
 - [Official ESPHome Modbus Controller docs](https://esphome.io/components/modbus_controller/).
+- [Official ESPHome Device Builder guide](https://esphome.io/guides/getting_started_hassio/).
 - [Community Deye register map](https://github.com/Lewa-Reka/esphome-deye-inverter), `SG0XLP1` configuration.
 - Detailed register provenance: [docs/SOURCES.md](docs/SOURCES.md).
 
