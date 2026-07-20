@@ -45,7 +45,7 @@ Board UART: TX `GPIO17`, RX `GPIO18`; automatic direction control, no `flow_cont
 5. Open the Dashboard **SECRETS** editor. Add the five keys listed in [`secrets.example.yaml`](https://github.com/scrhall/deye-sun6k-waveshare-esphome/blob/main/secrets.example.yaml), using the Wi-Fi details and generated credentials from the wizard.
 6. From the device menu, select **Validate**, then **Install**. Connect the board by USB-C for the first flash; later updates can use Wi-Fi.
 
-Defaults: `9600 8N1`, slave `0x01`, function `03`, polling every 10 seconds. If needed, change `modbus_address` to match the inverter's `Modbus SN`.
+ESPHome defaults: `9600 8N1`, slave `0x01`, function `03`, polling every 10 seconds. The inverter manual exposes only `Modbus SN` in the LCD menus, not baud rate or parity; set `modbus_address` to match that value. `9600 8N1` comes from the community integration and remains subject to physical verification on this model/firmware.
 
 ### Check `Modbus SN` on the inverter
 

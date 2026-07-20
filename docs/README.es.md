@@ -45,7 +45,7 @@ UART: TX `GPIO17`, RX `GPIO18`; dirección automática, sin `flow_control_pin`. 
 5. Abrir el editor **SECRETS** del Dashboard. Añadir las cinco claves de [`secrets.example.yaml`](https://github.com/scrhall/deye-sun6k-waveshare-esphome/blob/main/secrets.example.yaml), usando el Wi-Fi y las credenciales generadas por el asistente.
 6. En el menú del dispositivo, pulsar **Validate** y después **Install**. Conectar la placa por USB-C para la primera carga; las siguientes pueden hacerse por Wi-Fi.
 
-Valores predeterminados: `9600 8N1`, esclavo `0x01`, función `03`, consulta cada 10 segundos. Cambiar `modbus_address` si no coincide con `Modbus SN`.
+Valores ESPHome: `9600 8N1`, esclavo `0x01`, función `03`, consulta cada 10 segundos. El manual del inversor solo expone `Modbus SN` en la pantalla, no baud rate ni paridad; ajustar `modbus_address` a ese valor. `9600 8N1` procede de la integración comunitaria y requiere verificación física con este modelo/firmware.
 
 ### Comprobar `Modbus SN` en el inversor
 

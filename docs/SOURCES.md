@@ -42,4 +42,6 @@ Source: [Lewa-Reka/esphome-deye-inverter](https://github.com/Lewa-Reka/esphome-d
 
 No official Deye map for these low addresses was found. Verify values, scaling, and signs on the target inverter. Current YAML performs reads only.
 
+The inverter manual documents `Modbus SN` but does not expose a baud-rate/parity setting in its LCD instructions. The project's `9600 8N1` serial parameters come from the community SG0XLP1 configuration and require target-firmware verification.
+
 Amazon purchase links: [Waveshare board](https://amzn.to/4fxuGVk) and [optional 12 V DIN power supply](https://amzn.to/4vEIxz0). Amazon listings are not used as primary technical sources.
