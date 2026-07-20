@@ -1,0 +1,7 @@
+secrets.yaml
+.esphome/
+.vscode/
+.idea/
+*.bin
+*.elf
+*.map
