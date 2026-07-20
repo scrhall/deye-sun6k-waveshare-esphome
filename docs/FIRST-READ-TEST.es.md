@@ -23,13 +23,18 @@ Usar [`deye-sun6k-waveshare-test.yaml`](../deye-sun6k-waveshare-test.yaml). Solo
 
 ## Sin respuesta
 
+`Stop waiting for response from 1` significa que el ESP envió una petición al esclavo 1 y no recibió una trama válida. `Duplicate modbus command ... address=183 count=2` es una consecuencia: ESPHome agrupa los registros contiguos 183/184 en una lectura y vuelve a programarla mientras la anterior sigue sin respuesta; no indica sensores duplicados.
+
+Con el YAML de prueba actualizado, el log `VERY_VERBOSE` debe mostrar la petición `01 03 00 B7 00 02 74 2D`. Buscar después una línea RX. Si solo aparece TX, el fallo está antes de interpretar registros: puerto, dirección, polaridad, cableado o puerto deshabilitado por firmware.
+
 Cambiar una sola cosa cada vez:
 
-1. Confirmar otra vez `Modbus SN`.
-2. Revisar LED TX/RX de Waveshare. TX sin RX suele indicar ausencia de respuesta.
-3. Aislar alimentación, intercambiar A+ y B- y repetir.
-4. Usar cable mínimo y dejar inicialmente desactivada la terminación de 120 Ω.
-5. Confirmar que solo existe un cliente Modbus.
-6. Volver al puerto dedicado `Modbus`. Si el breakout BMS falla pero CAN sigue correcto, asumir que ese RS485 BMS no expone la telemetría requerida.
+1. Confirmar en `Paral. Set3` que `Modbus SN` muestra exactamente `01`; si no, cambiar `modbus_address` al valor real.
+2. Confirmar que el RJ45 es el puerto rotulado `Modbus`, no `BMS 485/CAN` ni `RS485/METER`.
+3. Revisar LED TX/RX de Waveshare durante una consulta. TX sin RX confirma ausencia eléctrica de respuesta.
+4. Si `Modbus SN=01` y solo hay TX: aislar alimentación, intercambiar únicamente A+ y B-, restaurar alimentación y repetir. No cambiar nada más en esta prueba.
+5. Si sigue sin RX, restaurar la polaridad original, usar cable mínimo y dejar desactivada la terminación de 120 Ω.
+6. Confirmar que no existe otro maestro/cliente Modbus conectado.
+7. Si dirección y ambas polaridades producen TX sin RX en el puerto dedicado, la hipótesis principal pasa a ser que el puerto `Modbus` marcado como reservado no está habilitado por ese firmware. No probar escrituras.
 
 Parar inmediatamente ante alarma BMS/CAN. Restaurar el cable original y desconectar el ramal ESP.

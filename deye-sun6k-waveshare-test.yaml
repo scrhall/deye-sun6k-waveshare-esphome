@@ -19,6 +19,10 @@ esp32:
 
 logger:
   hardware_uart: USB_SERIAL_JTAG
+  level: VERY_VERBOSE
+  logs:
+    modbus: VERY_VERBOSE
+    modbus_controller: VERY_VERBOSE
 
 api:
   encryption:

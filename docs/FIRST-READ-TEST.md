@@ -23,13 +23,18 @@ Use [`deye-sun6k-waveshare-test.yaml`](../deye-sun6k-waveshare-test.yaml). It co
 
 ## No response
 
+`Stop waiting for response from 1` means the ESP sent a request to slave 1 and received no valid frame. `Duplicate modbus command ... address=183 count=2` is a consequence: ESPHome combines adjacent registers 183/184 into one read and schedules it again while the prior request remains unanswered; it does not indicate duplicate sensors.
+
+With the updated test YAML, `VERY_VERBOSE` logs should show request `01 03 00 B7 00 02 74 2D`. Look for an RX line immediately after it. TX without RX isolates the failure before register decoding: port, address, polarity, wiring, or a firmware-disabled port.
+
 Change one thing at a time:
 
-1. Confirm `Modbus SN` again.
-2. Check Waveshare TX/RX indicators. TX activity without RX suggests no reply.
-3. Isolate power, swap A+ and B-, then retest.
-4. Use the shortest practical cable and keep 120 Ω termination disabled initially.
-5. Confirm only one Modbus client is connected.
-6. Return to the dedicated `Modbus` port. If the BMS-port breakout fails but battery CAN remains healthy, assume that BMS RS485 does not expose the required telemetry protocol.
+1. Confirm on `Paral. Set3` that `Modbus SN` is exactly `01`; otherwise set `modbus_address` to the displayed value.
+2. Confirm the RJ45 is labelled `Modbus`, not `BMS 485/CAN` or `RS485/METER`.
+3. Watch the Waveshare TX/RX indicators during a poll. TX without RX confirms no electrical reply.
+4. If `Modbus SN=01` and only TX occurs: isolate power, swap only A+ and B-, restore power, and retest. Change nothing else.
+5. If RX remains absent, restore original polarity, use the shortest cable, and keep 120 Ω termination disabled.
+6. Confirm no other Modbus master/client is connected.
+7. If the correct address and both polarities produce TX without RX on the dedicated port, the leading hypothesis is that this firmware does not enable the manual's reserved `Modbus` port. Do not attempt writes.
 
 Stop immediately if the inverter reports a BMS/CAN alarm. Restore the original battery cable and disconnect the ESP branch.
