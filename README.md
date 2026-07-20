@@ -24,6 +24,10 @@ Use only the inverter RJ45 port marked **`Modbus`**.
 | Pin 2 — A | A+ |
 | Pin 3 — GND | Do not connect |
 
+![Official Deye Modbus RJ45 pinout](docs/assets/deye-modbus-rj45-pinout.png)
+
+*Unmodified crop from the official Deye manual, printed page 53.*
+
 Alternative pair: pin 8 → B-, pin 7 → A+. Do not use both pairs.
 
 Power Waveshare through USB-C 5 V or DC 7–36 V. For a DIN-rail installation, the linked 12 V supply can feed the board's DC input; observe `+`/`-` polarity. Do not power it from the inverter RJ45.
@@ -34,11 +38,12 @@ Board UART: TX `GPIO17`, RX `GPIO18`; automatic direction control, no `flow_cont
 
 ## Install
 
-1. In Home Assistant, install/start **ESPHome Device Builder** and open its web UI.
-2. Select **New Device Setup**, enter Wi-Fi details, and finish the wizard. Before replacing its YAML, copy the generated API encryption key and OTA password.
-3. Open **EDIT**. Replace the generated YAML with the contents of [`deye-sun6k-waveshare.yaml`](https://raw.githubusercontent.com/scrhall/deye-sun6k-waveshare-esphome/main/deye-sun6k-waveshare.yaml), then save.
-4. Open the Dashboard **SECRETS** editor. Add the five keys listed in [`secrets.example.yaml`](https://github.com/scrhall/deye-sun6k-waveshare-esphome/blob/main/secrets.example.yaml), using the Wi-Fi details and generated credentials from the wizard.
-5. From the device menu, select **Validate**, then **Install**. Connect the board by USB-C for the first flash; later updates can use Wi-Fi.
+1. Choose the physical connection: use the dedicated `Modbus` port when available. If the BMS RJ45 must be shared while the battery uses CAN, first follow the **[male-to-male adapter cable guide](docs/SHARED-BMS-RJ45-CABLE.md)**.
+2. In Home Assistant, install/start **ESPHome Device Builder** and open its web UI.
+3. Select **New Device Setup**, enter Wi-Fi details, and finish the wizard. Before replacing its YAML, copy the generated API encryption key and OTA password.
+4. Open **EDIT**. Replace the generated YAML with the contents of [`deye-sun6k-waveshare.yaml`](https://raw.githubusercontent.com/scrhall/deye-sun6k-waveshare-esphome/main/deye-sun6k-waveshare.yaml), then save.
+5. Open the Dashboard **SECRETS** editor. Add the five keys listed in [`secrets.example.yaml`](https://github.com/scrhall/deye-sun6k-waveshare-esphome/blob/main/secrets.example.yaml), using the Wi-Fi details and generated credentials from the wizard.
+6. From the device menu, select **Validate**, then **Install**. Connect the board by USB-C for the first flash; later updates can use Wi-Fi.
 
 Defaults: `9600 8N1`, slave `0x01`, function `03`, polling every 10 seconds. If needed, change `modbus_address` to match the inverter's `Modbus SN`.
 

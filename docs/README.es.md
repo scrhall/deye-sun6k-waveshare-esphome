@@ -24,6 +24,10 @@ Usar solo el RJ45 del inversor marcado **`Modbus`**.
 | Pin 2 — A | A+ |
 | Pin 3 — GND | No conectar |
 
+![Pinout oficial Deye del RJ45 Modbus](assets/deye-modbus-rj45-pinout.png)
+
+*Recorte sin modificar del manual oficial Deye, página impresa 53.*
+
 Par alternativo: pin 8 → B-, pin 7 → A+. No usar ambos pares.
 
 Alimentar Waveshare por USB-C 5 V o DC 7–36 V. Para montaje DIN, la fuente enlazada puede alimentar la entrada DC de la placa respetando polaridad `+`/`-`. No alimentarla desde el RJ45.
@@ -34,11 +38,12 @@ UART: TX `GPIO17`, RX `GPIO18`; dirección automática, sin `flow_control_pin`. 
 
 ## Instalación
 
-1. En Home Assistant, instalar/iniciar **ESPHome Device Builder** y abrir su interfaz web.
-2. Elegir **New Device Setup**, introducir el Wi-Fi y terminar el asistente. Antes de sustituir su YAML, copiar la clave de cifrado API y la contraseña OTA generadas.
-3. Abrir **EDIT**. Sustituir el YAML por el contenido de [`deye-sun6k-waveshare.yaml`](https://raw.githubusercontent.com/scrhall/deye-sun6k-waveshare-esphome/main/deye-sun6k-waveshare.yaml) y guardar.
-4. Abrir el editor **SECRETS** del Dashboard. Añadir las cinco claves de [`secrets.example.yaml`](https://github.com/scrhall/deye-sun6k-waveshare-esphome/blob/main/secrets.example.yaml), usando el Wi-Fi y las credenciales generadas por el asistente.
-5. En el menú del dispositivo, pulsar **Validate** y después **Install**. Conectar la placa por USB-C para la primera carga; las siguientes pueden hacerse por Wi-Fi.
+1. Elegir conexión física: usar el puerto `Modbus` dedicado cuando esté disponible. Si hay que compartir el RJ45 BMS mientras la batería usa CAN, seguir primero la **[guía del cable adaptador macho–macho](SHARED-BMS-RJ45-CABLE.es.md)**.
+2. En Home Assistant, instalar/iniciar **ESPHome Device Builder** y abrir su interfaz web.
+3. Elegir **New Device Setup**, introducir el Wi-Fi y terminar el asistente. Antes de sustituir su YAML, copiar la clave de cifrado API y la contraseña OTA generadas.
+4. Abrir **EDIT**. Sustituir el YAML por el contenido de [`deye-sun6k-waveshare.yaml`](https://raw.githubusercontent.com/scrhall/deye-sun6k-waveshare-esphome/main/deye-sun6k-waveshare.yaml) y guardar.
+5. Abrir el editor **SECRETS** del Dashboard. Añadir las cinco claves de [`secrets.example.yaml`](https://github.com/scrhall/deye-sun6k-waveshare-esphome/blob/main/secrets.example.yaml), usando el Wi-Fi y las credenciales generadas por el asistente.
+6. En el menú del dispositivo, pulsar **Validate** y después **Install**. Conectar la placa por USB-C para la primera carga; las siguientes pueden hacerse por Wi-Fi.
 
 Valores predeterminados: `9600 8N1`, esclavo `0x01`, función `03`, consulta cada 10 segundos. Cambiar `modbus_address` si no coincide con `Modbus SN`.
 
