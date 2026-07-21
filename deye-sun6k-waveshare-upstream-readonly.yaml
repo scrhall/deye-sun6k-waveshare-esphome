@@ -14,10 +14,13 @@ substitutions:
   default_system_work_mode: "Zero Export To Load"
   default_solar_sell: "on"
 
-# Vendored from Lewa-Reka/esphome-deye-inverter 0.14.0.
-# Write-capable blocks are preserved as READONLY-DISABLED comments.
+# Read-only package pinned to the audited repository snapshot.
+# Do not change `ref` to `main`: a moving branch could reintroduce writes.
 packages:
-  pv_inverter: !include pv_inverter/deye_hybrid_1p_lv.yaml
+  pv_inverter:
+    url: https://github.com/scrhall/deye-sun6k-waveshare-esphome
+    ref: 0af8c44df7f26d3ab3ffc7f319b1f060fc712265
+    files: pv_inverter/deye_hybrid_1p_lv.yaml
 
 esphome:
   min_version: "2025.6.0"
