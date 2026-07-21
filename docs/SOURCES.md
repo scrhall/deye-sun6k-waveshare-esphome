@@ -18,7 +18,7 @@ Pinout: `1=B`, `2=A`, `3=GND`, `6=GND`, `7=A`, `8=B`; pins 4–5 unused.
 
 LCD route verified against printed pages 30, 34, and 44: main screen gear icon → `Advanced Function` → right-side ↑/↓ arrows → `Paral. Set3`. `Modbus SN` is shown at the top of that screen.
 
-Images `docs/assets/deye-function-port-definitions.png`, `deye-bms-rj45-pinout.png`, and `deye-modbus-rj45-pinout.png` are unmodified crops from printed pages 14, 52, and 53 of the official Deye manual.
+Image `docs/assets/deye-modbus-rj45-pinout.png` is an unmodified crop from printed page 53 of the official Deye manual.
 
 ## Waveshare — official
 
@@ -32,13 +32,11 @@ The schematic shows the single RS485 indicator (`LED2`) as bi-color: green chann
 
 [Modbus](https://esphome.io/components/modbus/) · [Controller](https://esphome.io/components/modbus_controller/) · [Sensor](https://esphome.io/components/sensor/modbus_controller/) · [UART](https://esphome.io/components/uart/)
 
-SunSpec discovery reference: official [`sunspec/pysunspec2`](https://github.com/sunspec/pysunspec2), where `SUNS_BASE_ADDR_DEFAULT = 40000`, the client scans `[40000, 0, 50000]`, and checks for byte signature `SunS`.
-
 ## Registers — community
 
 Source: [Lewa-Reka/esphome-deye-inverter](https://github.com/Lewa-Reka/esphome-deye-inverter), `SG0XLP1`.
 
-Its board-specific Waveshare example also sets `modbus.flow_control_pin: GPIO21`. Release `0.14.0` is not used as a runtime package here because it includes writable `number`, `select`, `switch`, and `datetime` entities plus a `set_safe_modbus_registers` script triggered 600 seconds after API disconnection.
+Its board-specific Waveshare example also sets `modbus.flow_control_pin: GPIO21`. This repository runs a pinned, audited subset of release `0.14.0`: read entities remain active while writable `number`, `select`, `switch`, and `datetime` components and the API-disconnect Safe Mode script are commented out.
 
 - [Battery](https://github.com/Lewa-Reka/esphome-deye-inverter/blob/main/pv_inverter/packages/deye_hybrid_1p/battery.yaml): 70–74, 182–184, 190–191.
 - [Grid/CT](https://github.com/Lewa-Reka/esphome-deye-inverter/blob/main/pv_inverter/packages/deye_hybrid_1p/grid.yaml): 76–77, 81, 150, 169, 172.
@@ -46,8 +44,8 @@ Its board-specific Waveshare example also sets `modbus.flow_control_pin: GPIO21`
 - [Load](https://github.com/Lewa-Reka/esphome-deye-inverter/blob/main/pv_inverter/packages/deye_hybrid_1p/load.yaml): 84–85, 178, 192.
 - [Inverter](https://github.com/Lewa-Reka/esphome-deye-inverter/blob/main/pv_inverter/packages/deye_hybrid_1p/inverter.yaml): 90–91, 175, 193.
 
-No official Deye map for these low addresses was found. Verify values, scaling, and signs on the target inverter. Current YAML performs reads only.
+No official Deye map for these low addresses was found. The read map, scaling, and transport were field-validated on one `SUN-6K-SG05LP1-EU-AM2-P` installation on 2026-07-21. Signed directions should still be checked for each installation. Current YAML performs reads only.
 
-The inverter manual documents `Modbus SN` but does not expose a baud-rate/parity setting in its LCD instructions. The project's `9600 8N1` serial parameters come from the community SG0XLP1 configuration and require target-firmware verification.
+The inverter manual documents `Modbus SN` but does not expose a baud-rate/parity setting in its LCD instructions. The project's `9600 8N1` serial parameters came from the community SG0XLP1 configuration and were physically verified on the installation above.
 
 Amazon purchase links: [Waveshare board](https://amzn.to/4fxuGVk) and [optional 12 V DIN power supply](https://amzn.to/4vEIxz0). Amazon listings are not used as primary technical sources.

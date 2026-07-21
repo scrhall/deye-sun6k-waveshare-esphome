@@ -3,77 +3,88 @@
 [English](../README.md) · [Fuentes](SOURCES.md)
 
 > [!WARNING]
-> **Contenido generado por una IA y pendiente de revisión.** La documentación y la configuración aún no han completado revisión humana ni prueba física. Quien use, modifique, cablee, flashee u opere este proyecto lo hace bajo su exclusiva responsabilidad. No se acepta responsabilidad por daños, pérdida de datos, lesiones o funcionamiento incorrecto.
+> Documentación y configuración generadas por IA. El happy path se probó físicamente en una instalación el 2026-07-21, pero no tiene revisión profesional independiente. Los trabajos sobre inversor y 230 V deben realizarse con seguridad y por personal cualificado cuando corresponda.
 
-Lector ESPHome Modbus RTU para:
+Integración ESPHome Modbus RTU de solo lectura para:
 
 - Deye `SUN-6K-SG05LP1-EU-AM2-P`
 - Waveshare `ESP32-S3-RS485-CAN`
 - [Comprar la placa en Amazon](https://amzn.to/4fxuGVk)
-- [Fuente opcional DIN 12 V DC, 1,25 A y 15 W](https://amzn.to/4vEIxz0)
+- [Fuente DIN opcional de 12 V DC](https://amzn.to/4vEIxz0)
 
-Hay dos perfiles **solo lectura**:
+## Happy path probado
 
-- [`deye-sun6k-waveshare-upstream-readonly.yaml`](../deye-sun6k-waveshare-upstream-readonly.yaml): perfil completo recomendado, con 76 entidades de lectura Modbus Controller procedentes de un snapshot fijado de Lewa-Reka `0.14.0`. Sus 104 entidades/callbacks capaces de escribir siguen visibles, pero comentados.
-- [`deye-sun6k-waveshare.yaml`](../deye-sun6k-waveshare.yaml): perfil compacto propio con 31 sensores.
+Usar exactamente esta topología:
 
-Consultar la [auditoría por fichero de entidades de escritura](UPSTREAM-WRITE-ENTITY-AUDIT.es.md) y las [notas del paquete copiado](../pv_inverter/README.md). Ambos perfiles usan dirección RS485 por `GPIO21` y carecen de escrituras activas.
+1. Puerto RJ45 dedicado del inversor rotulado **`Modbus`**.
+2. Un único cable CAT/Ethernet continuo; sin splitter, acoplador, ramal BMS, ramal Meter ni segundo maestro.
+3. Conectar exclusivamente los pines **1 y 2**:
 
-## Cableado
-
-Usar solo el RJ45 del inversor marcado **`Modbus`**.
-
-| RJ45 Modbus Deye | Waveshare |
+| RJ45 Modbus Deye | Borne RS485 Waveshare |
 |---|---|
-| Pin 1 — B | B- |
-| Pin 2 — A | A+ |
-| Pin 3 — GND | No conectar |
+| Pin 1 — `B` | `B-` |
+| Pin 2 — `A` | `A+` |
+| Pines 3–8 | Sin conectar |
+
+RJ45 es solo el conector: la comunicación es RS485/Modbus RTU, no Ethernet de red.
 
 ![Pinout oficial Deye del RJ45 Modbus](assets/deye-modbus-rj45-pinout.png)
 
 *Recorte sin modificar del manual oficial Deye, página impresa 53.*
 
-Par alternativo: pin 8 → B-, pin 7 → A+. No usar ambos pares.
+UART y control de dirección Waveshare:
 
-Alimentar Waveshare por USB-C 5 V o DC 7–36 V. Para montaje DIN, la fuente enlazada puede alimentar la entrada DC de la placa respetando polaridad `+`/`-`. No alimentarla desde el RJ45.
+```yaml
+uart:
+  tx_pin: GPIO17
+  rx_pin: GPIO18
 
-UART: TX `GPIO17`, RX `GPIO18`, habilitación de dirección RS485 `GPIO21`. ESPHome debe usar `modbus.flow_control_pin: GPIO21`. Mantener desactivado el jumper de 120 Ω en la prueba inicial con cable corto.
+modbus:
+  flow_control_pin: GPIO21
+```
 
-> **Seguridad:** aislar el inversor antes de abrirlo. La fuente DIN recibe 100–240 V AC: el cableado de red debe quedar protegido y realizarlo personal cualificado. No usar `RS485/METER` ni puertos paralelos. Compartir `BMS 485/CAN` solo siguiendo el [procedimiento experimental](SHARED-BMS-RJ45-CABLE.es.md). El manual Deye marca el puerto Modbus dedicado como “Reserved”; la compatibilidad depende del firmware.
+`GPIO21` es obligatorio: sin él la placa transmitía, pero no conmutaba correctamente el transceptor RS485 para recibir.
 
-## Instalación
+Alimentar Waveshare por separado mediante USB-C 5 V o borne DC 7–36 V. No sacar alimentación del RJ45 Modbus. Si la fuente DIN se alimenta desde la salida AC Backup/Load, usar una derivación protegida; no conectarla directamente a bornes sin protección.
 
-1. Elegir conexión física: usar el puerto `Modbus` dedicado cuando esté disponible. Si hay que compartir el RJ45 BMS mientras la batería usa CAN, seguir primero la **[guía del cable adaptador macho–macho](SHARED-BMS-RJ45-CABLE.es.md)**.
-2. En Home Assistant, instalar/iniciar **ESPHome Device Builder** y abrir su interfaz web.
-3. Elegir **New Device Setup**, introducir el Wi-Fi y terminar el asistente. Antes de sustituir su YAML, copiar la clave de cifrado API y la contraseña OTA generadas.
-4. Abrir **EDIT**. Para el perfil completo, usar [`deye-sun6k-waveshare-upstream-readonly.yaml`](https://raw.githubusercontent.com/scrhall/deye-sun6k-waveshare-esphome/main/deye-sun6k-waveshare-upstream-readonly.yaml). Usar `deye-sun6k-waveshare.yaml` para el perfil compacto.
-5. Abrir **SECRETS**. Añadir las claves de [`secrets.example.yaml`](https://github.com/scrhall/deye-sun6k-waveshare-esphome/blob/main/secrets.example.yaml), usando el Wi-Fi y las credenciales generadas por el asistente.
-6. En el menú del dispositivo, pulsar **Validate** y después **Install**. Conectar la placa por USB-C para la primera carga; las siguientes pueden hacerse por Wi-Fi.
+## Firmware
 
-Valores ESPHome: `9600 8N1`, esclavo `0x01`, función `03`, consulta cada 10 segundos. El manual del inversor solo expone `Modbus SN` en la pantalla, no baud rate ni paridad; ajustar `modbus_address` a ese valor. `9600 8N1` procede de la integración comunitaria y requiere verificación física con este modelo/firmware.
+El repositorio ofrece intencionadamente un solo firmware:
 
-### Comprobar `Modbus SN` en el inversor
+[`deye-sun6k-waveshare-upstream-readonly.yaml`](../deye-sun6k-waveshare-upstream-readonly.yaml)
 
-1. En la pantalla principal, pulsar el **engranaje** superior derecho.
-2. Pulsar **`Advanced Function`**.
-3. Usar las flechas laterales **↑/↓** hasta ver **`Paral. Set3`**.
-4. Leer **`Modbus SN`** en la parte superior. Debe mostrar `01` para el valor predeterminado `0x01`; si muestra otro número, cambiar `modbus_address` al valor mostrado.
+Fija un snapshot auditado derivado de [Lewa-Reka/esphome-deye-inverter](https://github.com/Lewa-Reka/esphome-deye-inverter). Aquí solo se activa su subconjunto de lectura. El repositorio upstream también ofrece controles de escritura del inversor; aquí no se exponen. Sus definiciones quedan únicamente como comentarios `READONLY-DISABLED` para poder auditarlas.
 
-Para consultar no hay que guardar: no cambiar campos ni pulsar la confirmación verde. El manual oficial no muestra contraseña para visualizar esta pantalla; el firmware puede variar.
+- [Auditoría por fichero de entidades escribibles](UPSTREAM-WRITE-ENTITY-AUDIT.es.md)
+- [Notas del paquete copiado](../pv_inverter/README.md)
+- CI rechaza cualquier `number`, `select`, `switch`, `button`, `datetime`, script o primitiva Modbus de escritura activa.
 
-Primera prueba: importar [`deye-sun6k-waveshare-test.yaml`](../deye-sun6k-waveshare-test.yaml), que solo lee SOC `184` y voltaje `183` (×0,01 V). Seguir la [prueba paso a paso](FIRST-READ-TEST.es.md). Si el puerto dedicado ignora el mapa propietario de registros bajos, probar la [firma `SunSpec`](../deye-sun6k-sunspec-test.yaml), también de solo lectura.
+## Instalación con ESPHome Device Builder
 
-No sustituir el paquete local copiado por la URL upstream viva: la versión `0.14.0` original expone entidades escribibles y ejecuta un script Modbus “safe mode” de cuatro ajustes tras desconectarse la API. Aquí esos bloques se conservan como comentarios `READONLY-DISABLED` para revisarlos sin activarlos.
+1. Crear el dispositivo y conservar la clave API y contraseña OTA generadas.
+2. Sustituir su YAML por el [YAML raw de solo lectura](https://raw.githubusercontent.com/scrhall/deye-sun6k-waveshare-esphome/main/deye-sun6k-waveshare-upstream-readonly.yaml).
+3. Añadir al editor **SECRETS** las claves de [`secrets.example.yaml`](../secrets.example.yaml).
+4. Configurar `Modbus SN = 01` en el inversor, o adaptar `modbus_inverter_address` al valor mostrado.
+5. Pulsar **Validate** y después **Install**. Usar USB-C para el primer flasheo; después puede usarse OTA.
 
-Verificar experimentalmente los signos de potencia de red y batería.
+Parámetros validados físicamente: `9600 8N1`, esclavo `0x01`, función `03`. Ruta de pantalla: engranaje → `Advanced Function` → flechas hasta `Paral. Set3` → `Modbus SN`.
+
+## Verificación en Home Assistant
+
+Comprobación en vivo realizada el 2026-07-21:
+
+- 86 entidades `sensor` y 2 `binary_sensor` reportando datos.
+- Batería, FV, red, carga, temperaturas, acumulados, metadatos, alarmas y diagnóstico ESP.
+- `Running Status = normal`, `Device Alarm = OK`, `Device Fault = OK`.
+- Cero entidades `number`, `select`, `switch`, `button` o `datetime` para este dispositivo.
+
+El número exacto puede cambiar en futuras versiones, pero los dominios de control escribibles deben permanecer en cero.
 
 ## Fuentes
 
-- [Manual oficial Deye](https://www.deyeinverter.com/deyeinverter/2025/08/12/rand/5761/%5Bb%5Dmanual_sun-3.6-10k-sg05lp1-eu-am2-p_20250812_en.pdf): puertos, `Modbus SN` y pinout en páginas impresas 3, 14, 44 y 53.
-- Waveshare oficial: [wiki](https://www.waveshare.com/wiki/ESP32-S3-RS485-CAN), [demo](https://files.waveshare.com/wiki/ESP32-S3-RS485-CAN/ESP32-S3-RS485-CAN-Demo.zip), [esquema](https://files.waveshare.com/wiki/ESP32-S3-RS485-CAN/ESP32-S3-RS485-CAN-Schematic.pdf).
-- [Documentación oficial ESPHome](https://esphome.io/components/modbus_controller/).
-- [Guía oficial ESPHome Device Builder](https://esphome.io/guides/getting_started_hassio/).
-- [Mapa comunitario Deye](https://github.com/Lewa-Reka/esphome-deye-inverter), configuración `SG0XLP1`.
-- Procedencia detallada: [SOURCES.md](SOURCES.md).
+- [Manual oficial Deye](https://www.deyeinverter.com/deyeinverter/2025/08/12/rand/5761/%5Bb%5Dmanual_sun-3.6-10k-sg05lp1-eu-am2-p_20250812_en.pdf)
+- Waveshare oficial: [producto](https://www.waveshare.com/esp32-s3-rs485-can.htm), [wiki](https://www.waveshare.com/wiki/ESP32-S3-RS485-CAN), [demo](https://files.waveshare.com/wiki/ESP32-S3-RS485-CAN/ESP32-S3-RS485-CAN-Demo.zip) y [esquema](https://files.waveshare.com/wiki/ESP32-S3-RS485-CAN/ESP32-S3-RS485-CAN-Schematic.pdf)
+- [ESPHome Modbus Controller](https://esphome.io/components/modbus_controller/)
+- [Procedencia detallada](SOURCES.md)
 
-Licencia MIT. Proyecto no afiliado a Deye, Waveshare, Amazon ni ESPHome.
+Licencia MIT. Los ficheros upstream copiados conservan Apache-2.0. Proyecto no afiliado a Deye, Waveshare, Amazon, ESPHome ni Lewa-Reka.
