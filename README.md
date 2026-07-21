@@ -32,7 +32,7 @@ Alternative pair: pin 8 → B-, pin 7 → A+. Do not use both pairs.
 
 Power Waveshare through USB-C 5 V or DC 7–36 V. For a DIN-rail installation, the linked 12 V supply can feed the board's DC input; observe `+`/`-` polarity. Do not power it from the inverter RJ45.
 
-Board UART: TX `GPIO17`, RX `GPIO18`; automatic direction control, no `flow_control_pin`. Keep the 120 Ω jumper disabled for the initial short-cable test.
+Board UART: TX `GPIO17`, RX `GPIO18`, RS485 direction-enable `GPIO21`. ESPHome must set `modbus.flow_control_pin: GPIO21`. Keep the 120 Ω jumper disabled for the initial short-cable test.
 
 > **Safety:** isolate the inverter before opening it. The DIN supply has a 100–240 V AC input: mains wiring must be enclosed and performed by a qualified person. Do not use `RS485/METER` or parallel ports. Share `BMS 485/CAN` only under the [experimental breakout procedure](docs/SHARED-BMS-RJ45-CABLE.md). The Deye manual marks the dedicated Modbus port “Reserved”; firmware compatibility is not guaranteed.
 
@@ -57,6 +57,8 @@ ESPHome defaults: `9600 8N1`, slave `0x01`, function `03`, polling every 10 seco
 Viewing does not require saving: avoid changing fields and do not press the green confirmation button. The official manual shows no password prompt for viewing; firmware may differ.
 
 First test: import [`deye-sun6k-waveshare-test.yaml`](deye-sun6k-waveshare-test.yaml), which reads only SOC register `184` and voltage register `183` (×0.01 V). Follow the [step-by-step test](docs/FIRST-READ-TEST.md). If the dedicated port ignores the proprietary low register map, try the read-only [`SunSpec` signature test](deye-sun6k-sunspec-test.yaml).
+
+Do not substitute the full Lewa-Reka package when strict read-only operation is required: release `0.14.0` exposes writable entities and runs a four-setting Modbus “safe mode” script after an API disconnect. This repository uses its register map as a community source but implements sensors only.
 
 Signed grid/battery power values must be checked against known import/export and charge/discharge states.
 

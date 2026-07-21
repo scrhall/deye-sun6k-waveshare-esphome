@@ -57,6 +57,7 @@ uart:
 modbus:
   id: inverter_modbus
   uart_id: inverter_uart
+  flow_control_pin: GPIO21
 
 modbus_controller:
   - id: deye

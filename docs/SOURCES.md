@@ -23,7 +23,7 @@ Images `docs/assets/deye-function-port-definitions.png`, `deye-bms-rj45-pinout.p
 ## Waveshare — official
 
 - [Wiki](https://www.waveshare.com/wiki/ESP32-S3-RS485-CAN): isolated RS485, power, terminals, termination.
-- [Demo](https://files.waveshare.com/wiki/ESP32-S3-RS485-CAN/ESP32-S3-RS485-CAN-Demo.zip): `GPIO17` TX and `GPIO18` RX in `WS_GPIO.h`; automatic half-duplex handling in `WS_RS485.cpp`.
+- [Demo](https://files.waveshare.com/wiki/ESP32-S3-RS485-CAN/ESP32-S3-RS485-CAN-Demo.zip): `WS_GPIO.h` defines `TXD1=GPIO17`, `RXD1=GPIO18`, and direction enable `TXD1EN=GPIO21`; `WS_RS485.cpp` handles half-duplex direction in software.
 - [Schematic](https://files.waveshare.com/wiki/ESP32-S3-RS485-CAN/ESP32-S3-RS485-CAN-Schematic.pdf).
 
 The schematic shows the single RS485 indicator (`LED2`) as bi-color: green channel on `TXD1`, blue channel on `RXD1`.
@@ -37,6 +37,8 @@ SunSpec discovery reference: official [`sunspec/pysunspec2`](https://github.com/
 ## Registers — community
 
 Source: [Lewa-Reka/esphome-deye-inverter](https://github.com/Lewa-Reka/esphome-deye-inverter), `SG0XLP1`.
+
+Its board-specific Waveshare example also sets `modbus.flow_control_pin: GPIO21`. Release `0.14.0` is not used as a runtime package here because it includes writable `number`, `select`, `switch`, and `datetime` entities plus a `set_safe_modbus_registers` script triggered 600 seconds after API disconnection.
 
 - [Battery](https://github.com/Lewa-Reka/esphome-deye-inverter/blob/main/pv_inverter/packages/deye_hybrid_1p/battery.yaml): 70–74, 182–184, 190–191.
 - [Grid/CT](https://github.com/Lewa-Reka/esphome-deye-inverter/blob/main/pv_inverter/packages/deye_hybrid_1p/grid.yaml): 76–77, 81, 150, 169, 172.

@@ -29,13 +29,14 @@ With the updated test YAML, `VERY_VERBOSE` logs should show request `01 03 00 B7
 
 Change one thing at a time:
 
-1. Confirm on `Paral. Set3` that `Modbus SN` is exactly `01`; otherwise set `modbus_address` to the displayed value.
-2. Confirm the RJ45 is labelled `Modbus`, not `BMS 485/CAN` or `RS485/METER`.
-3. Watch the Waveshare's single bi-color RS485 LED during a poll. The official schematic maps **green=TX** and **blue=RX**. Periodic green without blue confirms transmission with no electrical reply.
-4. If `Modbus SN=01` and only TX occurs: isolate power, swap only A+ and B-, restore power, and retest. Change nothing else.
-5. If RX remains absent, restore original polarity, use the shortest cable, and keep 120 Ω termination disabled.
-6. Confirm no other Modbus master/client is connected.
-7. If the correct address and both polarities produce TX without RX on the dedicated port, the leading hypothesis is that this firmware does not enable the manual's reserved `Modbus` port. Do not attempt writes.
+1. Confirm `modbus.flow_control_pin` is `GPIO21`. Without it, the board logs TX but does not correctly switch the RS485 transceiver for reception.
+2. Confirm on `Paral. Set3` that `Modbus SN` is exactly `01`; otherwise set `modbus_address` to the displayed value.
+3. Confirm the RJ45 is labelled `Modbus`, not `BMS 485/CAN` or `RS485/METER`.
+4. Watch the Waveshare's single bi-color RS485 LED during a poll. The official schematic maps **green=TX** and **blue=RX**. Periodic green without blue confirms transmission with no electrical reply.
+5. If `Modbus SN=01` and only TX occurs: isolate power, swap only A+ and B-, restore power, and retest. Change nothing else.
+6. If RX remains absent, restore original polarity, use the shortest cable, and keep 120 Ω termination disabled.
+7. Confirm no other Modbus master/client is connected.
+8. Only after confirming GPIO21, address, and both polarities should a disabled port be considered. Do not attempt writes.
 
 Stop immediately if the inverter reports a BMS/CAN alarm. Restore the original battery cable and disconnect the ESP branch.
 

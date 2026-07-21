@@ -38,7 +38,7 @@ wifi:
 captive_portal:
 
 # Pins confirmed by the official Waveshare ESP32-S3-RS485-CAN demo.
-# The isolated transceiver switches TX/RX automatically: no flow_control_pin.
+# GPIO21 is TXD1EN and must control the isolated RS485 transceiver direction.
 uart:
   id: inverter_uart
   tx_pin: GPIO17
@@ -52,6 +52,7 @@ uart:
 modbus:
   id: inverter_modbus
   uart_id: inverter_uart
+  flow_control_pin: GPIO21
 
 modbus_controller:
   - id: deye
