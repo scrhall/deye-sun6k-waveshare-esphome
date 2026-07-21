@@ -1,0 +1,237 @@
+# Copyright 2025 Lewa-Reka & Harvey Dent
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+sensor:
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "Daily Generator Production"
+    id: daily_generator_production
+    register_type: holding
+    address: 62
+    unit_of_measurement: "kWh"
+    device_class: energy
+    state_class: "total_increasing"
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+    value_type: U_WORD
+    icon: "mdi:generator-portable"
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "Total Generator Production"
+    id: total_generator_production
+    register_type: holding
+    address: 92
+    unit_of_measurement: "kWh"
+    device_class: energy
+    state_class: "total_increasing"
+    accuracy_decimals: 1
+    value_type: U_DWORD_R
+    filters:
+      - multiply: 0.1
+    icon: "mdi:generator-stationary"
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "Generator L1 Voltage"
+    id: generator_l1_voltage
+    register_type: holding
+    address: 181
+    unit_of_measurement: "V"
+    device_class: voltage
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+    value_type: U_WORD
+    icon: "mdi:lightning-bolt"
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "Generator Frequency"
+    register_type: holding
+    address: 196
+    unit_of_measurement: "Hz"
+    device_class: frequency
+    accuracy_decimals: 2
+    filters:
+      - multiply: 0.01
+    value_type: U_WORD
+    icon: "mdi:engine"
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "Generator Power Total"
+    id: generator_power_total
+    register_type: holding
+    address: 166
+    unit_of_measurement: "W"
+    device_class: power
+    state_class: "measurement"
+    accuracy_decimals: 0
+    value_type: S_WORD
+    icon: "mdi:engine"
+
+binary_sensor:
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "Generator Connected Status"
+    id: generator_connected_status
+    register_type: holding
+    address: 195
+    device_class: running
+    icon: "mdi:power"
+
+# READONLY-DISABLED-BEGIN: upstream `select` write-capable block
+# select:
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "Generator Port Use"
+#     address: 235
+#     value_type: U_WORD
+#     entity_category: config
+#     icon: "mdi:connection"
+#     optionsmap:
+#       "Generator Input": 0
+#       "SmartLoad Output": 1
+#       "Micro Inverter Input": 2
+#
+# READONLY-DISABLED-END: upstream `select` write-capable block
+# READONLY-DISABLED-BEGIN: upstream `switch` write-capable block
+# switch:
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: Generator
+#     id: switch_generator
+#     register_type: holding
+#     address: 234
+#     bitmask: 1
+#     entity_category: config
+#     icon: mdi:toggle-switch
+#
+# READONLY-DISABLED-END: upstream `switch` write-capable block
+# READONLY-DISABLED-BEGIN: upstream `number` write-capable block
+# number:
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "SmartLoad Off Voltage"
+#     address: 236
+#     unit_of_measurement: "V"
+#     device_class: voltage
+#     value_type: U_WORD
+#     multiply: 100
+#     min_value: 38
+#     max_value: 63
+#     step: 0.01
+#     entity_category: config
+#     mode: box
+#     icon: "mdi:lightning-bolt-circle"
+#
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "SmartLoad Off SOC"
+#     address: 237
+#     unit_of_measurement: "%"
+#     value_type: U_WORD
+#     min_value: 0
+#     max_value: 100
+#     step: 1
+#     entity_category: config
+#     mode: box
+#     icon: "mdi:lightning-bolt-circle"
+#
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "SmartLoad On Voltage"
+#     address: 238
+#     unit_of_measurement: "V"
+#     device_class: voltage
+#     value_type: U_WORD
+#     multiply: 100
+#     min_value: 38
+#     max_value: 63
+#     step: 0.01
+#     entity_category: config
+#     mode: box
+#     icon: "mdi:lightning-bolt-circle"
+#
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "SmartLoad On SOC"
+#     address: 239
+#     unit_of_measurement: "%"
+#     value_type: U_WORD
+#     min_value: 0
+#     max_value: 100
+#     step: 1
+#     entity_category: config
+#     mode: box
+#     icon: "mdi:lightning-bolt-circle"
+#
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "Generator Operating Time"
+#     id: generator_operating_time
+#     unit_of_measurement: "h"
+#     device_class: duration
+#     entity_category: config
+#     register_type: holding
+#     min_value: 0
+#     max_value: 24
+#     step: 1
+#     address: 223
+#     value_type: U_WORD
+#     mode: box
+#     icon: "mdi:generator-stationary"
+#
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "Generator Cooling Time"
+#     id: generator_cooling_time
+#     unit_of_measurement: "h"
+#     device_class: duration
+#     entity_category: config
+#     register_type: holding
+#     min_value: 0
+#     max_value: 24
+#     step: 1
+#     address: 224
+#     value_type: U_WORD
+#     mode: box
+#     icon: "mdi:generator-stationary"
+#
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "Generator Min PV Power"
+#     id: generator_min_pv_power
+#     unit_of_measurement: "W"
+#     device_class: power
+#     entity_category: config
+#     register_type: holding
+#     min_value: 0
+#     max_value: 8000
+#     step: 1
+#     address: 241
+#     value_type: U_WORD
+#     mode: box
+#     icon: "mdi:solar-power"
+# READONLY-DISABLED-END: upstream `number` write-capable block

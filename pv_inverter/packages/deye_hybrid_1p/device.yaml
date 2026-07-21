@@ -1,0 +1,272 @@
+# Copyright 2025 Lewa-Reka & Harvey Dent
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+sensor:
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "Device Modbus Address"
+    register_type: holding
+    address: 1
+    unit_of_measurement: ""
+    accuracy_decimals: 0
+    value_type: U_WORD
+    icon: "mdi:identifier"
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: Device Rated Power
+    id: device_rated_power_raw
+    register_type: holding
+    address: 16
+    unit_of_measurement: W
+    device_class: power
+    accuracy_decimals: 0
+    entity_category: diagnostic
+    filters:
+      - multiply: 0.1
+    value_type: U_DWORD_R
+    icon: mdi:flash
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: Device MPPTs
+    register_type: holding
+    address: 18
+    unit_of_measurement: ""
+    accuracy_decimals: 0
+    value_type: U_WORD
+    icon: mdi:solar-panel
+    entity_category: diagnostic
+    filters:
+      - lambda: |-
+          uint16_t value = (uint16_t)x;
+          // Extract upper nibble (bits 8-11) and shift right 8 bits
+          uint16_t mppts = (value >> 8) & 0x0F;
+          // Validation: if value exceeds 12 MPPTs, use default of 2
+          if (mppts < 1 || mppts > 12) {
+            return 2.0;
+          }
+          return (float)mppts;
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: Device Phases
+    register_type: holding
+    address: 18
+    unit_of_measurement: ""
+    accuracy_decimals: 0
+    value_type: U_WORD
+    icon: mdi:transmission-tower
+    entity_category: diagnostic
+    filters:
+      - lambda: |-
+          uint16_t value = (uint16_t)x;
+          // Extract lower nibble (bits 0-3)
+          uint16_t phases = value & 0x0F;
+          // Validation: if value exceeds 3 phases, use default of 3
+          if (phases < 1 || phases > 3) {
+            return 3.0;
+          }
+          return (float)phases;
+
+binary_sensor:
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "Grid Connected Status"
+    id: grid_connected_status
+    register_type: holding
+    address: 194
+    device_class: running
+    icon: "mdi:power"
+
+# READONLY-DISABLED-BEGIN: upstream `switch` write-capable block
+# switch:
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: Power Switch
+#     id: switch_power
+#     register_type: holding
+#     address: 43
+#     bitmask: 1
+#     entity_category: config
+#     icon: mdi:toggle-switch
+#
+# READONLY-DISABLED-END: upstream `switch` write-capable block
+text_sensor:
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    bitmask: 0
+    register_type: holding
+    address: 59
+    raw_encode: HEXBYTES
+    name: Running Status
+    icon: mdi:play-circle
+    lambda: |-
+      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+      switch (value) {
+        case 0: return std::string("standby");
+        case 1: return std::string("selfcheck");
+        case 2: return std::string("normal");
+        case 3: return std::string("alarm");
+        case 4: return std::string("fault");
+        default: return std::string("----");
+      }
+      return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: Device Type
+    register_type: holding
+    address: 0
+    bitmask: 0
+    raw_encode: HEXBYTES
+    icon: mdi:chip
+    entity_category: diagnostic
+    lambda: |-
+      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+      switch (value) {
+        case 0x0000: return std::string("Unknown");
+        case 0x0002:
+        case 0x0200: return std::string("String Inverter");
+        case 0x0003:
+        case 0x0300: return std::string("Single-Phase Hybrid Inverter");
+        case 0x0004:
+        case 0x0400: return std::string("Microinverter");
+        case 0x0005:
+        case 0x0500: return std::string("LV 3-Phase Hybrid Inverter");
+        case 0x0006: return std::string("HV 3-Phase Hybrid Inverter");
+        case 0x0007:
+        case 0x0600: return std::string("HV 3-Phase Inverter 6-15kW");
+        case 0x0008:
+        case 0x0601: return std::string("HV 3-Phase Inverter 20-50kW");
+        default: return std::string("Unknown");
+      }
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: Device Serial Number
+    register_type: holding
+    address: 3
+    response_size: 10
+    bitmask: 0
+    raw_encode: NONE
+    icon: mdi:barcode
+    entity_category: diagnostic
+    lambda: |-
+      if (x.size() < 10) return std::string("N/A");
+      std::string serial;
+
+      for (int i = 0; i < 10; i += 2) {
+        char high = x[i];
+        char low = x[i + 1];
+        if (high != 0) serial += high;
+        if (low != 0) serial += low;
+      }
+      return serial.empty() ? std::string("N/A") : serial;
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "Device Alarm"
+    register_type: holding
+    entity_category: diagnostic
+    address: 101
+    response_size: 4
+    bitmask: 0
+    raw_encode: NONE
+    icon: "mdi:alert-outline"
+    lambda: |-
+      if (x.size() < 4) return std::string("N/A");
+
+      uint16_t word1 = ((uint16_t)(uint8_t)x[0] << 8) | (uint8_t)x[1];
+      uint16_t word2 = ((uint16_t)(uint8_t)x[2] << 8) | (uint8_t)x[3];
+      uint32_t value = ((uint32_t)word2 << 16) | word1;
+
+      if (value == 0) return std::string("OK");
+
+      if (value & (1UL << 1)) return std::string("Fan failure");
+      if (value & (1UL << 2)) return std::string("Grid phase failure");
+      if (value & (1UL << 3)) return std::string("Meter communication failure");
+      if (value & (1UL << 30)) return std::string("Battery loss");
+      if (value & (1UL << 31)) return std::string("Parallel communication quality");
+
+      return std::string("Error");
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "Device Fault"
+    register_type: holding
+    address: 103
+    response_size: 8
+    bitmask: 0
+    entity_category: diagnostic
+    raw_encode: NONE
+    icon: "mdi:message-alert-outline"
+    lambda: |-
+      if (x.size() < 8) return std::string("N/A");
+
+      uint16_t word1 = ((uint16_t)(uint8_t)x[0] << 8) | (uint8_t)x[1];
+      uint16_t word2 = ((uint16_t)(uint8_t)x[2] << 8) | (uint8_t)x[3];
+      uint16_t word3 = ((uint16_t)(uint8_t)x[4] << 8) | (uint8_t)x[5];
+      uint16_t word4 = ((uint16_t)(uint8_t)x[6] << 8) | (uint8_t)x[7];
+
+      uint64_t value = ((uint64_t)word4 << 48) | ((uint64_t)word3 << 32) | 
+                      ((uint64_t)word2 << 16) | word1;
+
+      if (value == 0) return std::string("OK");
+
+      if (value & (1ULL << 6)) return std::string("DC/DC Soft Start failure");
+      if (value & (1ULL << 9)) return std::string("Auxiliary power supply failure");
+      if (value & (1ULL << 12)) return std::string("Working mode changed");
+      if (value & (1ULL << 17)) return std::string("AC Over-current failure");
+      if (value & (1ULL << 18)) return std::string("Tz_Integ_Fault failure");
+      if (value & (1ULL << 19)) return std::string("DC Over-current failure");
+      if (value & (1ULL << 22)) return std::string("AC current leakage failure");
+      if (value & (1ULL << 63)) return std::string("Temperature is too high");
+
+      return std::string("Error");
+
+# READONLY-DISABLED-BEGIN: upstream `number` write-capable block
+# number:
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "Self Check Time"
+#     id: self_check_time
+#     register_type: holding
+#     address: 61
+#     unit_of_measurement: "s"
+#     min_value: 0
+#     max_value: 1000
+#     step: 1
+#     entity_category: diagnostic
+#     mode: box
+#     icon: "mdi:timer-check"
+#
+# READONLY-DISABLED-END: upstream `number` write-capable block
+# READONLY-DISABLED-BEGIN: upstream `select` write-capable block
+# select:
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "Meter"
+#     address: 326
+#     value_type: U_WORD
+#     entity_category: config
+#     icon: "mdi:connection"
+#     optionsmap:
+#       "Disable": 0
+#       "Enable": 1
+#       "Generator": 13
+# READONLY-DISABLED-END: upstream `select` write-capable block

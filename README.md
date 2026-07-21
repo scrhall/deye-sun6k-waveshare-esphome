@@ -12,7 +12,12 @@ ESPHome Modbus RTU reader for:
 - [Buy the board on Amazon](https://amzn.to/4fxuGVk)
 - [Optional 12 V DC, 1.25 A, 15 W DIN-rail power supply](https://amzn.to/4vEIxz0)
 
-Current YAML is **read-only**: 31 holding-register sensors, no write entities or commands. Compiled with ESPHome 2026.6.5. The register map is community-sourced and requires testing on the target inverter.
+Two **read-only** profiles are available:
+
+- [`deye-sun6k-waveshare-upstream-readonly.yaml`](deye-sun6k-waveshare-upstream-readonly.yaml): recommended full profile, with 76 active Modbus Controller read entities from a pinned Lewa-Reka `0.14.0` snapshot. Its 104 write-capable entities/callbacks remain visible in source but are commented out.
+- [`deye-sun6k-waveshare.yaml`](deye-sun6k-waveshare.yaml): compact hand-curated profile with 31 holding-register sensors.
+
+See the [per-file Spanish write-entity audit](docs/UPSTREAM-WRITE-ENTITY-AUDIT.es.md) and [vendored package notes](pv_inverter/README.md). Both profiles use `GPIO21` direction control and contain no active write entities or commands.
 
 ## Wiring
 
@@ -41,8 +46,8 @@ Board UART: TX `GPIO17`, RX `GPIO18`, RS485 direction-enable `GPIO21`. ESPHome m
 1. Choose the physical connection: use the dedicated `Modbus` port when available. If the BMS RJ45 must be shared while the battery uses CAN, first follow the **[male-to-male adapter cable guide](docs/SHARED-BMS-RJ45-CABLE.md)**.
 2. In Home Assistant, install/start **ESPHome Device Builder** and open its web UI.
 3. Select **New Device Setup**, enter Wi-Fi details, and finish the wizard. Before replacing its YAML, copy the generated API encryption key and OTA password.
-4. Open **EDIT**. Replace the generated YAML with the contents of [`deye-sun6k-waveshare.yaml`](https://raw.githubusercontent.com/scrhall/deye-sun6k-waveshare-esphome/main/deye-sun6k-waveshare.yaml), then save.
-5. Open the Dashboard **SECRETS** editor. Add the five keys listed in [`secrets.example.yaml`](https://github.com/scrhall/deye-sun6k-waveshare-esphome/blob/main/secrets.example.yaml), using the Wi-Fi details and generated credentials from the wizard.
+4. Open **EDIT**. For the full profile, replace the generated YAML with [`deye-sun6k-waveshare-upstream-readonly.yaml`](https://raw.githubusercontent.com/scrhall/deye-sun6k-waveshare-esphome/main/deye-sun6k-waveshare-upstream-readonly.yaml), then save. Use `deye-sun6k-waveshare.yaml` instead for the compact profile.
+5. Open the Dashboard **SECRETS** editor. Add the keys listed in [`secrets.example.yaml`](https://github.com/scrhall/deye-sun6k-waveshare-esphome/blob/main/secrets.example.yaml), using the Wi-Fi details and generated credentials from the wizard.
 6. From the device menu, select **Validate**, then **Install**. Connect the board by USB-C for the first flash; later updates can use Wi-Fi.
 
 ESPHome defaults: `9600 8N1`, slave `0x01`, function `03`, polling every 10 seconds. The inverter manual exposes only `Modbus SN` in the LCD menus, not baud rate or parity; set `modbus_address` to match that value. `9600 8N1` comes from the community integration and remains subject to physical verification on this model/firmware.
@@ -58,7 +63,7 @@ Viewing does not require saving: avoid changing fields and do not press the gree
 
 First test: import [`deye-sun6k-waveshare-test.yaml`](deye-sun6k-waveshare-test.yaml), which reads only SOC register `184` and voltage register `183` (×0.01 V). Follow the [step-by-step test](docs/FIRST-READ-TEST.md). If the dedicated port ignores the proprietary low register map, try the read-only [`SunSpec` signature test](deye-sun6k-sunspec-test.yaml).
 
-Do not substitute the full Lewa-Reka package when strict read-only operation is required: release `0.14.0` exposes writable entities and runs a four-setting Modbus “safe mode” script after an API disconnect. This repository uses its register map as a community source but implements sensors only.
+Do not replace the local vendored package with the live upstream URL when strict read-only operation is required: upstream `0.14.0` exposes writable entities and runs a four-setting Modbus “safe mode” script after an API disconnect. This repository preserves those blocks as `READONLY-DISABLED` comments for review.
 
 Signed grid/battery power values must be checked against known import/export and charge/discharge states.
 

@@ -12,7 +12,12 @@ Lector ESPHome Modbus RTU para:
 - [Comprar la placa en Amazon](https://amzn.to/4fxuGVk)
 - [Fuente opcional DIN 12 V DC, 1,25 A y 15 W](https://amzn.to/4vEIxz0)
 
-El YAML actual es **solo lectura**: 31 sensores, sin entidades ni comandos de escritura. Compilado con ESPHome 2026.6.5. El mapa de registros es comunitario y requiere prueba física.
+Hay dos perfiles **solo lectura**:
+
+- [`deye-sun6k-waveshare-upstream-readonly.yaml`](../deye-sun6k-waveshare-upstream-readonly.yaml): perfil completo recomendado, con 76 entidades de lectura Modbus Controller procedentes de un snapshot fijado de Lewa-Reka `0.14.0`. Sus 104 entidades/callbacks capaces de escribir siguen visibles, pero comentados.
+- [`deye-sun6k-waveshare.yaml`](../deye-sun6k-waveshare.yaml): perfil compacto propio con 31 sensores.
+
+Consultar la [auditoría por fichero de entidades de escritura](UPSTREAM-WRITE-ENTITY-AUDIT.es.md) y las [notas del paquete copiado](../pv_inverter/README.md). Ambos perfiles usan dirección RS485 por `GPIO21` y carecen de escrituras activas.
 
 ## Cableado
 
@@ -41,8 +46,8 @@ UART: TX `GPIO17`, RX `GPIO18`, habilitación de dirección RS485 `GPIO21`. ESPH
 1. Elegir conexión física: usar el puerto `Modbus` dedicado cuando esté disponible. Si hay que compartir el RJ45 BMS mientras la batería usa CAN, seguir primero la **[guía del cable adaptador macho–macho](SHARED-BMS-RJ45-CABLE.es.md)**.
 2. En Home Assistant, instalar/iniciar **ESPHome Device Builder** y abrir su interfaz web.
 3. Elegir **New Device Setup**, introducir el Wi-Fi y terminar el asistente. Antes de sustituir su YAML, copiar la clave de cifrado API y la contraseña OTA generadas.
-4. Abrir **EDIT**. Sustituir el YAML por el contenido de [`deye-sun6k-waveshare.yaml`](https://raw.githubusercontent.com/scrhall/deye-sun6k-waveshare-esphome/main/deye-sun6k-waveshare.yaml) y guardar.
-5. Abrir el editor **SECRETS** del Dashboard. Añadir las cinco claves de [`secrets.example.yaml`](https://github.com/scrhall/deye-sun6k-waveshare-esphome/blob/main/secrets.example.yaml), usando el Wi-Fi y las credenciales generadas por el asistente.
+4. Abrir **EDIT**. Para el perfil completo, usar [`deye-sun6k-waveshare-upstream-readonly.yaml`](https://raw.githubusercontent.com/scrhall/deye-sun6k-waveshare-esphome/main/deye-sun6k-waveshare-upstream-readonly.yaml). Usar `deye-sun6k-waveshare.yaml` para el perfil compacto.
+5. Abrir **SECRETS**. Añadir las claves de [`secrets.example.yaml`](https://github.com/scrhall/deye-sun6k-waveshare-esphome/blob/main/secrets.example.yaml), usando el Wi-Fi y las credenciales generadas por el asistente.
 6. En el menú del dispositivo, pulsar **Validate** y después **Install**. Conectar la placa por USB-C para la primera carga; las siguientes pueden hacerse por Wi-Fi.
 
 Valores ESPHome: `9600 8N1`, esclavo `0x01`, función `03`, consulta cada 10 segundos. El manual del inversor solo expone `Modbus SN` en la pantalla, no baud rate ni paridad; ajustar `modbus_address` a ese valor. `9600 8N1` procede de la integración comunitaria y requiere verificación física con este modelo/firmware.
@@ -58,7 +63,7 @@ Para consultar no hay que guardar: no cambiar campos ni pulsar la confirmación 
 
 Primera prueba: importar [`deye-sun6k-waveshare-test.yaml`](../deye-sun6k-waveshare-test.yaml), que solo lee SOC `184` y voltaje `183` (×0,01 V). Seguir la [prueba paso a paso](FIRST-READ-TEST.es.md). Si el puerto dedicado ignora el mapa propietario de registros bajos, probar la [firma `SunSpec`](../deye-sun6k-sunspec-test.yaml), también de solo lectura.
 
-No sustituirlo por el paquete completo Lewa-Reka si se necesita funcionamiento estrictamente de solo lectura: la versión `0.14.0` expone entidades escribibles y ejecuta un script Modbus “safe mode” de cuatro ajustes tras desconectarse la API. Este repositorio usa su mapa como fuente comunitaria, pero implementa únicamente sensores.
+No sustituir el paquete local copiado por la URL upstream viva: la versión `0.14.0` original expone entidades escribibles y ejecuta un script Modbus “safe mode” de cuatro ajustes tras desconectarse la API. Aquí esos bloques se conservan como comentarios `READONLY-DISABLED` para revisarlos sin activarlos.
 
 Verificar experimentalmente los signos de potencia de red y batería.
 

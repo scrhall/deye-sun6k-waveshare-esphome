@@ -1,0 +1,152 @@
+# READONLY-DISABLED-BEGIN: upstream `select` write-capable block
+# select:
+#   - platform: modbus_controller
+#     id: energy_management_priority
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "Energy Management Priority"
+#     address: 243
+#     value_type: U_WORD
+#     icon: "mdi:priority-high"
+#     optionsmap:
+#       "Battery First": 0
+#       "Load First": 1
+#
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     id: system_work_mode
+#     name: "System Work Mode"
+#     address: 244
+#     value_type: U_WORD
+#     icon: "mdi:cog"
+#     optionsmap:
+#       "Selling First": 0
+#       "Zero Export To Load": 1
+#       "Zero Export To CT": 2
+#
+# READONLY-DISABLED-END: upstream `select` write-capable block
+# READONLY-DISABLED-BEGIN: read-only template depends on removed writable select
+# binary_sensor:
+#   - platform: template
+#     name: "Load Priority"
+#     lambda: return id(energy_management_priority).current_option() == "Load First";
+#     icon: "mdi:priority-high"
+# READONLY-DISABLED-END: read-only template depends on removed writable select
+
+# READONLY-DISABLED-BEGIN: upstream `switch` write-capable block
+# switch:
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "Solar Sell"
+#     id: switch_solar_sell
+#     register_type: holding
+#     address: 247
+#     bitmask: 1
+#     entity_category: config
+#     icon: "mdi:toggle-switch"
+#
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "Microinverter Export cut-off"
+#     register_type: holding
+#     address: 280
+#     bitmask: 0
+#     icon: "mdi:transmission-tower"
+#
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "Generator Peak Shaving Enable"
+#     register_type: holding
+#     address: 280
+#     bitmask: 4
+#     icon: "mdi:transmission-tower"
+#
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "Grid Peak Shaving Enable"
+#     register_type: holding
+#     address: 280
+#     bitmask: 8
+#     icon: "mdi:transmission-tower"
+#
+# READONLY-DISABLED-END: upstream `switch` write-capable block
+# READONLY-DISABLED-BEGIN: upstream `number` write-capable block
+# number:
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     id: max_sell_power
+#     name: "Max Sell Power"
+#     unit_of_measurement: W
+#     device_class: power
+#     min_value: 0
+#     step: 1
+#     address: 245
+#     value_type: U_WORD
+#     mode: box
+#     icon: "mdi:cash-multiple"
+#
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "Max Solar Power"
+#     id: max_solar_power
+#     unit_of_measurement: W
+#     device_class: power
+#     min_value: 0
+#     step: 1
+#     address: 53
+#     value_type: U_WORD
+#     mode: box
+#     icon: "mdi:solar-power"
+#
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "Zero Export Power"
+#     id: zero_export_power
+#     address: 206
+#     unit_of_measurement: "W"
+#     device_class: power
+#     value_type: U_WORD
+#     min_value: 20
+#     max_value: 500
+#     step: 1
+#     mode: box
+#     icon: "mdi:transmission-tower-import"
+#
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "Generator Peak shaving"
+#     id: generator_peak_shaving_power
+#     register_type: holding
+#     address: 292
+#     unit_of_measurement: "W"
+#     device_class: power
+#     value_type: U_WORD
+#     min_value: 0
+#     step: 1
+#     mode: box
+#     icon: "mdi:generator-stationary"
+#
+#   - platform: modbus_controller
+#     use_write_multiple: true
+#     modbus_controller_id: ${modbus_controller_id}
+#     name: "Grid Peak Shaving Power"
+#     id: grid_peak_shaving_power
+#     register_type: holding
+#     address: 293
+#     unit_of_measurement: "W"
+#     device_class: power
+#     value_type: U_WORD
+#     min_value: 0
+#     step: 1
+#     mode: box
+#     icon: "mdi:transmission-tower"
+# READONLY-DISABLED-END: upstream `number` write-capable block

@@ -1,0 +1,39 @@
+substitutions:
+  api_key: !secret deye_sun6k_rs485__encryption_key
+  ota_password: !secret ota_password
+  fallback_password: !secret wifi_password
+  wifi_ssid: !secret wifi_ssid
+  wifi_password: !secret wifi_password
+  device_name: deye-sun6k-rs485
+  friendly_name: "Deye SUN-6K"
+  modbus_inverter_address: "0x01"
+  # Retained for source compatibility; the Safe Mode write callback is disabled locally.
+  safe_mode_delay: 600s
+  default_maximum_battery_charge_current: "130"
+  default_max_sell_power: "6000"
+  default_system_work_mode: "Zero Export To Load"
+  default_solar_sell: "on"
+
+# Vendored from Lewa-Reka/esphome-deye-inverter 0.14.0.
+# Write-capable blocks are preserved as READONLY-DISABLED comments.
+packages:
+  pv_inverter: !include pv_inverter/deye_hybrid_1p_lv.yaml
+
+esphome:
+  min_version: "2025.6.0"
+  name_add_mac_suffix: true
+
+uart:
+  tx_pin: GPIO17
+  rx_pin: GPIO18
+
+modbus:
+  flow_control_pin: GPIO21
+
+logger:
+  level: WARN
+
+esp32:
+  variant: esp32s3
+  framework:
+    type: esp-idf
