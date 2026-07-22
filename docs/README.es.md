@@ -2,9 +2,6 @@
 
 [English](../README.md) · [Fuentes](SOURCES.md)
 
-> [!WARNING]
-> Documentación y configuración generadas por IA. El happy path se probó físicamente en una instalación el 2026-07-21, pero no tiene revisión profesional independiente. Los trabajos sobre inversor y 230 V deben realizarse con seguridad y por personal cualificado cuando corresponda.
-
 Integración ESPHome Modbus RTU de solo lectura para:
 
 - Deye `SUN-6K-SG05LP1-EU-AM2-P`

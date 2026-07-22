@@ -2,9 +2,6 @@
 
 [Español](docs/README.es.md) · [Sources](docs/SOURCES.md)
 
-> [!WARNING]
-> AI-generated documentation and configuration. The happy path below was field-tested on one installation on 2026-07-21, but has not received independent professional review. Work on the inverter and mains wiring must be performed safely and by qualified personnel where required.
-
 Read-only ESPHome Modbus RTU integration for:
 
 - Deye `SUN-6K-SG05LP1-EU-AM2-P`
